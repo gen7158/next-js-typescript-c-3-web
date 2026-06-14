@@ -1,6 +1,6 @@
 # プロジェクト運用・修正・デプロイガイド
 
-最終更新: 2026年6月14日
+最終更新: 2026年6月14日（GitHub 移行 + CI/Dependabot 追加）
 
 ## 1. プロジェクトの正本
 
@@ -19,7 +19,7 @@
 ### TypeScript・Webフルスタック学習サイト
 
 ```text
-/Users/shinjourikunozomi/Documents/Codex/2026-06-11/next-js-typescript-c-3-web/work/ts-pass-lab
+/Users/shinjourikunozomi/Documents/Codex/2026-06-11/next-js-typescript-c-3-web/ts-pass-lab
 ```
 
 - Vercelプロジェクト: `ts-pass-lab`
@@ -32,7 +32,7 @@
 /Users/shinjourikunozomi/.gemini/antigravity/scratch/car-news-app
 ```
 
-このディレクトリは過去の作業場所です。現在は`work/ts-pass-lab`と同じ内容へ同期されていますが、
+このディレクトリは過去の作業場所です。現在は`ts-pass-lab`と同じ内容へ同期されていますが、
 今後は直接編集せず、必要な場合だけ正本から同期します。
 
 ```bash
@@ -40,7 +40,7 @@ rsync -a --delete \
   --exclude node_modules \
   --exclude .next \
   --exclude .vercel \
-  /Users/shinjourikunozomi/Documents/Codex/2026-06-11/next-js-typescript-c-3-web/work/ts-pass-lab/ \
+  /Users/shinjourikunozomi/Documents/Codex/2026-06-11/next-js-typescript-c-3-web/ts-pass-lab/ \
   /Users/shinjourikunozomi/.gemini/antigravity/scratch/car-news-app/
 ```
 
@@ -66,7 +66,7 @@ types/                型定義
 ### TypeScript版
 
 ```text
-work/ts-pass-lab/src/
+ts-pass-lab/src/
   app/                       画面本体とAPI Route
     api/typescript-run/      TypeScript型検査API
   components/CodeWorkspace  講義コード演習
@@ -76,7 +76,37 @@ work/ts-pass-lab/src/
   types/                     型定義
 ```
 
+## 2.5 GitHub / Vercel 自動デプロイ
+
+このプロジェクトは1つの GitHub リポジトリで C言語版と TypeScript版を両方管理するモノレポ構成です。
+
+```text
+GitHub: gen7158/next-js-typescript-c-3-web
+  ├─ main ブランチへ push
+  │   ├─ GitHub Actions: typecheck + lint + build（C言語版・TypeScript版 並列）
+  │   └─ Vercel: 自動デプロイ
+  │       ├─ next-js-typescript-c-3-web プロジェクト（Root Directory = .）
+  │       └─ ts-pass-lab プロジェクト（Root Directory = ts-pass-lab）
+```
+
+### GitHub Actions
+
+`.github/workflows/ci.yml` で typecheck / lint / build を自動実行します。`workflow` スコープ付き Personal Access Token を初回 push に使用。
+
+### Dependabot
+
+`.github/dependabot.yml` で週次の依存関係更新と GitHub Actions 更新を自動 PR 化します。
+
+### Vercel 設定
+
+- `next-js-typescript-c-3-web` プロジェクト: Root Directory = `.`
+- `ts-pass-lab` プロジェクト: Root Directory = `ts-pass-lab`
+- 環境変数: `GEMINI_API_KEY` を `ts-pass-lab` の Production に設定
+
+GitHub 連携を有効化するには Vercel Dashboard でプロジェクト → Settings → Git → Connect Git Repository から `gen7158/next-js-typescript-c-3-web` を選択してください。
+
 ## 3. 今後の修正方針
+
 
 ### 共通方針
 
@@ -161,7 +191,7 @@ URL: http://localhost:3000
 ### TypeScript版
 
 ```bash
-cd /Users/shinjourikunozomi/Documents/Codex/2026-06-11/next-js-typescript-c-3-web/work/ts-pass-lab
+cd /Users/shinjourikunozomi/Documents/Codex/2026-06-11/next-js-typescript-c-3-web/ts-pass-lab
 npm install
 npm run dev -- -p 3001
 ```
@@ -182,7 +212,7 @@ npm run build
 ### TypeScript版
 
 ```bash
-cd /Users/shinjourikunozomi/Documents/Codex/2026-06-11/next-js-typescript-c-3-web/work/ts-pass-lab
+cd /Users/shinjourikunozomi/Documents/Codex/2026-06-11/next-js-typescript-c-3-web/ts-pass-lab
 npm run typecheck
 npm run lint
 npm run build
@@ -236,7 +266,7 @@ https://next-js-typescript-c-3-web.vercel.app
 ### TypeScript版
 
 ```bash
-cd /Users/shinjourikunozomi/Documents/Codex/2026-06-11/next-js-typescript-c-3-web/work/ts-pass-lab
+cd /Users/shinjourikunozomi/Documents/Codex/2026-06-11/next-js-typescript-c-3-web/ts-pass-lab
 npm run typecheck
 npm run lint
 npm run build
