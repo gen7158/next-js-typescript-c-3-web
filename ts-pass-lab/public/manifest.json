@@ -1,0 +1,18 @@
+{
+  "name": "TS PASS LAB",
+  "short_name": "TS PASS",
+  "description": "TypeScriptからReact、Next.js、API、DB、認証、テスト、デプロイまで学ぶAI学習アプリ",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#090b10",
+  "theme_color": "#7c6cf2",
+  "lang": "ja",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

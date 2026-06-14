@@ -1,0 +1,235 @@
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(4, 5, 12, 0.85);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  padding: 1.5rem;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.modal {
+  max-width: 650px;
+  width: 100%;
+  background: rgba(16, 20, 38, 0.75);
+  border: 1px solid rgba(0, 240, 255, 0.25);
+  border-radius: 20px;
+  box-shadow: 0 20px 50px rgba(0, 240, 255, 0.1), 0 0 40px rgba(168, 85, 247, 0.05);
+  padding: 2.2rem;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  animation: slideUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Diagonal scanning line effect for active modal */
+.modal::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -50%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(0, 240, 255, 0.03) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: skewX(-25deg);
+  animation: scan 6s infinite linear;
+}
+
+.closeBtn {
+  position: absolute;
+  top: 1.2rem;
+  right: 1.2rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition-smooth);
+  z-index: 10;
+}
+
+.closeBtn:hover {
+  color: #fff;
+  background: rgba(255, 59, 48, 0.1);
+  border-color: rgba(255, 59, 48, 0.3);
+}
+
+.aiHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.aiBadge {
+  font-family: var(--font-outfit);
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #000;
+  background: linear-gradient(90deg, var(--color-primary), #a855f7);
+  padding: 0.3rem 0.8rem;
+  border-radius: 9999px;
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
+}
+
+.aiModelStatus {
+  font-size: 0.65rem;
+  color: var(--color-text-muted);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+}
+
+.articleTitle {
+  font-family: var(--font-outfit);
+  font-size: 1.35rem;
+  font-weight: 700;
+  line-height: 1.35;
+  color: #fff;
+  margin-top: 0.2rem;
+}
+
+.modalContent {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.sectionTitle {
+  font-family: var(--font-outfit);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  letter-spacing: 0.02em;
+}
+
+.summaryList {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.summaryItem {
+  display: flex;
+  gap: 0.6rem;
+  font-size: 0.9rem;
+  line-height: 1.45;
+  color: var(--color-text-main);
+  align-items: flex-start;
+}
+
+.summaryBullet {
+  color: var(--color-primary);
+  margin-top: 0.15rem;
+  flex-shrink: 0;
+  filter: drop-shadow(0 0 3px rgba(0, 240, 255, 0.5));
+}
+
+.text {
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: var(--color-text-muted);
+  background: rgba(255, 255, 255, 0.01);
+  padding: 0.8rem 1rem;
+  border-left: 2px solid var(--color-accent);
+  border-radius: 0 8px 8px 0;
+}
+
+.textOrange {
+  border-left-color: var(--color-secondary);
+}
+
+/* Loader Styles */
+.loaderContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.loaderSpinner {
+  width: 48px;
+  height: 48px;
+  border: 3px solid rgba(0, 240, 255, 0.1);
+  border-radius: 50%;
+  border-top-color: var(--color-primary);
+  border-right-color: var(--color-accent);
+  animation: spin 1s infinite linear;
+  box-shadow: 0 0 15px rgba(0, 240, 255, 0.1);
+}
+
+.loaderText {
+  font-family: var(--font-jakarta);
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+  letter-spacing: 0.05em;
+  text-align: center;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scan {
+  from {
+    left: -50%;
+  }
+  to {
+    left: 150%;
+  }
+}

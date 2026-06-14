@@ -1,0 +1,50 @@
+.settings { margin-top: 13px; padding: 25px; border: 1px solid var(--border); border-radius: 13px; background: var(--surface); }
+.title { display: flex; align-items: center; gap: 10px; }
+.title > svg { color: #aaa1ff; }
+.title > div { flex: 1; }
+.title small { color: #aaa1ff; font-size: 8px; font-weight: 850; letter-spacing: .15em; }
+.title h2 { margin-top: 4px; }
+.title > span { padding: 5px 8px; border-radius: 6px; font-size: 9px; font-weight: 750; }
+.connected { color: var(--green); background: rgba(67,197,158,.1); }
+.disconnected { color: var(--muted); background: var(--panel); }
+.settings > p { margin-top: 12px; color: var(--muted); font-size: 11px; line-height: 1.8; }
+.keyRow { display: grid; grid-template-columns: minmax(0,1fr) auto auto; gap: 7px; margin-top: 17px; }
+.keyRow > div { position: relative; }
+.keyRow input, .manual input { width: 100%; height: 42px; padding: 0 44px 0 12px; border: 1px solid var(--border); border-radius: 8px; outline: none; color: white; background: #090b10; }
+.keyRow > div button { position: absolute; right: 5px; top: 4px; width: 34px; height: 34px; display: grid; place-items: center; border: 0; color: var(--muted); background: transparent; cursor: pointer; }
+.keyRow > button, .modelHeader > button, .manual button { min-height: 42px; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 0 13px; border: 1px solid var(--border); border-radius: 8px; color: white; background: var(--panel); font-size: 10px; font-weight: 700; cursor: pointer; }
+.keyRow button:disabled, .modelHeader button:disabled, .manual button:disabled { opacity: .4; cursor: default; }
+.modelHeader { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; margin-top: 24px; padding-top: 19px; border-top: 1px solid var(--border); }
+.modelHeader h3 { font-size: 14px; }
+.modelHeader span { display: block; margin-top: 4px; color: var(--muted); font-size: 8px; }
+.spin { animation: spin 1s linear infinite; }
+.settings .success, .settings .error { padding: 10px; border-radius: 7px; font-size: 10px; }
+.settings .success { color: var(--green); background: rgba(67,197,158,.08); }
+.settings .error { color: #ff929b; background: rgba(240,107,122,.08); }
+.models { display: grid; gap: 7px; margin-top: 13px; }
+.models > button { width: 100%; display: grid; grid-template-columns: auto minmax(0,1fr) auto; align-items: center; gap: 11px; padding: 13px; border: 1px solid var(--border); border-radius: 9px; color: white; background: #0a0d13; text-align: left; cursor: pointer; }
+.models > button:hover, .models .selected { border-color: rgba(124,108,242,.55); background: rgba(124,108,242,.07); }
+.radio { width: 22px; height: 22px; display: grid; place-items: center; border: 1px solid var(--border); border-radius: 50%; color: white; }
+.selected .radio { border-color: var(--purple); background: var(--purple); }
+.models strong, .models code, .models small { display: block; }
+.models strong { font-size: 11px; }
+.models code { margin-top: 3px; color: #aaa1ff; font-size: 9px; }
+.models small { margin-top: 4px; color: var(--muted); font-size: 8px; }
+.models aside { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+.models aside em, .models aside b { display: flex; align-items: center; gap: 3px; padding: 3px 6px; border-radius: 5px; font-size: 8px; font-style: normal; }
+.models aside em { color: #dfdafe; background: rgba(124,108,242,.16); }
+.models aside b { color: var(--green); background: rgba(67,197,158,.1); }
+.models aside span { color: var(--muted); font-size: 7px; }
+.manual { display: block; margin-top: 17px; }
+.manual > span { display: block; margin-bottom: 7px; color: var(--muted); font-size: 9px; }
+.manual > div { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 7px; }
+.manual input { padding-right: 12px; }
+.settings .warning { padding: 12px; border: 1px solid rgba(243,179,80,.2); border-radius: 8px; color: #d8bd8c; background: rgba(243,179,80,.05); font-size: 9px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (max-width: 700px) {
+  .keyRow { grid-template-columns: 1fr 1fr; }
+  .keyRow > div { grid-column: 1 / -1; }
+  .modelHeader { align-items: stretch; flex-direction: column; }
+  .models > button { grid-template-columns: auto minmax(0,1fr); }
+  .models aside { grid-column: 2; align-items: flex-start; }
+}
