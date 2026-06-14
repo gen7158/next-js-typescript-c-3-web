@@ -1,0 +1,205 @@
+import type { Lesson } from "@/types/lesson";
+
+type LessonSeed = Pick<Lesson, "id" | "title" | "category" | "level" | "estimatedMinutes" | "summary"> & {
+  syntax: string;
+  code: string;
+  lines: string[];
+  mistakes: string[];
+  points: string[];
+};
+
+const expectedOutputs: Record<string, string> = {
+  "c-basics": "Hello, C!",
+  history: "",
+  "printf-scanf": "年齢: 20歳です",
+  "char-io": "A",
+  types: "3 0.75 A",
+  signed: "100 -20",
+  constants: "7",
+  operators: "2 1",
+  if: "合格",
+  switch: "読込",
+  for: "6",
+  while: "3 2 1",
+  "do-while": "0",
+  jump: "0 1 3",
+  arrays: "240",
+  characters: "A 65",
+  strings: "CAT A",
+  functions: "8",
+  include: "1",
+  define: "1100",
+  ctype: "B",
+  reading: "3 1",
+  output: "24",
+  comprehensive: "4",
+  "file-write": "5",
+  "file-read": "Hello, C!\n",
+  "split-compile": "2",
+  "linked-list": "1 2 3 ",
+  "binary-search": "2",
+  "unit-test": "OK",
+};
+
+const exerciseInputs: Record<string, string> = {
+  "printf-scanf": "20\n",
+  "char-io": "A\n",
+  "file-read": "Hello, C!\n",
+};
+
+const questionCategoryOrder = [
+  "C言語の基本", "printf / scanf", "変数と型", "演算子", "if文", "switch文",
+  "for文", "while文", "配列", "文字", "文字列", "関数", "プリプロセッサ",
+  "ctype.h", "コード読解", "実行結果予測", "総合問題",
+  "ファイルI/O", "分割コンパイル", "データ構造", "アルゴリズム", "テストとデバッグ",
+];
+
+function completeProgram(seed: LessonSeed) {
+  if (seed.code.includes("int main")) return seed.code;
+  const directives = seed.code.split("\n").filter((line) => line.startsWith("#"));
+  const body = seed.code.split("\n").filter((line) => !line.startsWith("#")).join("\n").trim();
+  return [
+    ...(!directives.some((line) => line.includes("stdio.h")) ? ["#include <stdio.h>"] : []),
+    ...directives,
+    "",
+    "int main(void) {",
+    ...body.split("\n").map((line) => `    ${line}`),
+    "    return 0;",
+    "}",
+  ].join("\n");
+}
+
+function starterProgram(seed: LessonSeed) {
+  const headers = Array.from(new Set(
+    completeProgram(seed)
+      .split("\n")
+      .filter((line) => line.startsWith("#include")),
+  ));
+  return [
+    ...(headers.length ? headers : ["#include <stdio.h>"]),
+    "",
+    "int main(void) {",
+    "    /* 「書き方ガイド」のSTEP 1から、自分で処理を書きましょう。 */",
+    "",
+    "    return 0;",
+    "}",
+  ].join("\n");
+}
+
+const seeds: LessonSeed[] = [
+  { id: "c-basics", title: "C言語の基本", category: "C言語の基本", level: "basic", estimatedMinutes: 15, summary: "ソースコードから実行までの流れと、main関数の役割を知ります。", syntax: "Cプログラムは main 関数から実行され、文の末尾には ; を付けます。", code: "#include <stdio.h>\n\nint main(void) {\n    printf(\"Hello, C!\\n\");\n    return 0;\n}", lines: ["stdio.hを読み込みます。", "main関数がプログラムの開始地点です。", "文字列を画面に表示します。", "正常終了を表す0を返します。"], mistakes: ["セミコロンを付け忘れる", "全角記号をコードに混ぜる"], points: ["main関数の戻り値", "コメントと文の区切り"] },
+  { id: "history", title: "C言語の歴史と特徴", category: "C言語の基本", level: "basic", estimatedMinutes: 10, summary: "C言語がどのような言語で、なぜ広く使われているかを学びます。", syntax: "C言語は手続き型のコンパイル言語で、移植性と実行速度に優れます。", code: "/* コメントは実行されません */\nint main(void) {\n    return 0;\n}", lines: ["複数行コメントです。", "main関数を定義します。", "正常終了します。"], mistakes: ["C言語をインタプリタ言語だと覚える", "コメント内の文字が実行されると思う"], points: ["コンパイル言語", "移植性と手続き型"] },
+  { id: "printf-scanf", title: "printf / scanf", category: "printf / scanf", level: "basic", estimatedMinutes: 25, summary: "画面への出力とキーボードからの入力を扱います。", syntax: "printfは出力、scanfは入力です。型に合う変換指定子を使います。", code: "int age;\nprintf(\"年齢: \");\nscanf(\"%d\", &age);\nprintf(\"%d歳です\\n\", age);", lines: ["整数用の変数を用意します。", "入力を促す文字を表示します。", "&ageで入力先のアドレスを渡します。", "入力された整数を表示します。"], mistakes: ["scanfで&を忘れる", "%dと%fを取り違える"], points: ["変換指定子", "scanfの&"] },
+  { id: "char-io", title: "getchar / putchar", category: "文字", level: "basic", estimatedMinutes: 15, summary: "1文字だけを入力・出力する関数を学びます。", syntax: "getchar()は1文字を読み、putchar()は1文字を表示します。", code: "int ch;\nch = getchar();\nputchar(ch);", lines: ["文字コードを保持できるint型を使います。", "標準入力から1文字読みます。", "読み込んだ1文字を表示します。"], mistakes: ["getcharの戻り値をcharだけで扱う", "文字列をputcharに渡す"], points: ["EOFを扱えるint型", "1文字入出力"] },
+  { id: "types", title: "変数とデータ型", category: "変数と型", level: "basic", estimatedMinutes: 25, summary: "値を保存する変数と、整数・小数・文字の型を学びます。", syntax: "intは整数、doubleは実数、charは1文字を保存します。", code: "int count = 3;\ndouble rate = 0.75;\nchar grade = \'A\';\nprintf(\"%d %.2f %c\\n\", count, rate, grade);", lines: ["整数3を保存します。", "実数0.75を保存します。", "文字Aをシングルクォートで保存します。", "3つの値を型に合う指定子で表示します。"], mistakes: ["文字をダブルクォートで囲む", "整数除算を実数だと思う"], points: ["型と変換指定子の対応", "初期化"] },
+  { id: "signed", title: "int / char / unsigned / signed", category: "変数と型", level: "standard", estimatedMinutes: 20, summary: "符号付き・符号なしの整数型と型修飾子を整理します。", syntax: "signedは負数を扱え、unsignedは0以上の値だけを扱います。", code: "unsigned int points = 100;\nsigned int balance = -20;\nprintf(\"%u %d\\n\", points, balance);", lines: ["符号なし整数を宣言します。", "符号付き整数を宣言します。", "%uと%dでそれぞれ表示します。"], mistakes: ["unsignedに負数を入れる", "%uと%dを混同する"], points: ["値の範囲", "unsignedの変換指定子"] },
+  { id: "constants", title: "定数", category: "変数と型", level: "basic", estimatedMinutes: 15, summary: "変更しない値をconstや#defineで表す方法を学びます。", syntax: "constを付けた変数は、初期化後に値を変更できません。", code: "const int DAYS = 7;\nprintf(\"%d\\n\", DAYS);", lines: ["変更しない整数定数を定義します。", "定数の値を表示します。"], mistakes: ["const変数を後から代入する", "文字定数と文字列を混同する"], points: ["constの意味", "整数定数・文字定数・文字列定数"] },
+  { id: "operators", title: "演算子", category: "演算子", level: "basic", estimatedMinutes: 25, summary: "算術・比較・論理演算子の意味と評価結果を確認します。", syntax: "a + b は加算、a == b は等価比較、a && b は論理ANDを表します。", code: "int a = 3, b = 2;\nprintf(\"%d %d\\n\", a / b, a % b);", lines: ["整数3と2を用意します。", "3/2=1と3%2=1を表示します。"], mistakes: ["/ と % の意味を取り違える", "== と = を混同する"], points: ["算術演算子", "比較演算子"] },
+  { id: "if", title: "if文", category: "if文", level: "basic", estimatedMinutes: 20, summary: "条件によって処理を分岐するif文の基本を学びます。", syntax: "if (条件) { 処理 } の形で書きます。", code: "int score = 80;\nif (score >= 70) {\n    printf(\"合格\\n\");\n}", lines: ["score=80とします。", "70以上なら合格と表示します。", "合格を表示します。"], mistakes: ["条件に ; を付けてしまう", "else if と else の対応ミス"], points: ["条件式", "ブロック"] },
+  { id: "switch", title: "switch文", category: "switch文", level: "basic", estimatedMinutes: 20, summary: "値に応じて複数の分岐を行うswitch文を学びます。", syntax: "switch(式) { case 値: ... break; } で値を分岐します。", code: "int cmd = 2;\nswitch (cmd) {\n    case 1: printf(\"保存\\n\"); break;\n    case 2: printf(\"読込\\n\"); break;\n}", lines: ["cmd=2とします。", "case 1で保存、case 2で読込です。", "cmd=2なので読込を表示します。"], mistakes: ["breakを書き忘れる", "caseに複雑な式を使う"], points: ["caseとbreak", "defaultの役割"] },
+  { id: "for", title: "for文", category: "for文", level: "basic", estimatedMinutes: 20, summary: "指定回数繰り返すfor文の基本を学びます。", syntax: "for (初期化; 条件; 更新) { 処理 } の形で繰り返します。", code: "int sum = 0;\nfor (int i = 1; i <= 3; i++) { sum += i; }\nprintf(\"%d\\n\", sum);", lines: ["sum=0で始めます。", "iを1から3まで足します。", "合計6を表示します。"], mistakes: ["条件式を間違えて無限ループ", "i++ を書き忘れる"], points: ["初期化・条件・更新", "ループカウンタ"] },
+  { id: "while", title: "while文", category: "while文", level: "basic", estimatedMinutes: 20, summary: "条件が真の間繰り返すwhile文を学びます。", syntax: "while (条件) { 処理 } で条件が真の間繰り返します。", code: "int n = 3;\nwhile (n > 0) {\n    printf(\"%d \", n);\n    n--;\n}", lines: ["n=3で始めます。", "n>0の間、値を表示して減らします。", "3 2 1を表示します。"], mistakes: ["ループ変数の更新忘れ", "条件を逆に書いてしまう"], points: ["条件付きループ", "無限ループ"] },
+  { id: "do-while", title: "do-while文", category: "while文", level: "basic", estimatedMinutes: 15, summary: "処理を1回は実行してから条件を見るdo-whileを学びます。", syntax: "do { 処理 } while (条件); の形で、少なくとも1回は実行します。", code: "int n = 0;\ndo {\n    printf(\"%d\\n\", n);\n    n++;\n} while (n < 0);", lines: ["n=0で始めます。", "0を表示します。", "nを1にします。", "n<0が偽なので抜けます。"], mistakes: ["while末尾の;を忘れる", "条件判定を誤る"], points: ["最低1回実行", "末尾のセミコロン"] },
+  { id: "jump", title: "break / continue", category: "while文", level: "standard", estimatedMinutes: 15, summary: "ループの流れを変えるbreakとcontinueを学びます。", syntax: "breakはループを抜け、continueは残りを飛ばして次へ進みます。", code: "for (int i = 0; i < 4; i++) {\n    if (i == 2) continue;\n    if (i == 3) break;\n    printf(\"%d \", i);\n}", lines: ["iを0から3まで動かします。", "i=2のとき表示を飛ばします。", "i=3のときループを抜けます。", "0 1 を表示します。"], mistakes: ["continueとbreakを取り違える", "ループ外でbreakを使う"], points: ["break", "continue"] },
+  { id: "arrays", title: "配列", category: "配列", level: "basic", estimatedMinutes: 25, summary: "同じ型の値をまとめて扱う配列を学びます。", syntax: "int a[5]; のように宣言し、a[0] から使います。", code: "int a[4] = {10, 20, 30, 40};\nint s = 0;\nfor (int i = 0; i < 4; i++) s += a[i];\nprintf(\"%d\\n\", s);", lines: ["4要素の配列を用意します。", "合計0で始めます。", "全要素を足します。", "合計100を表示します。"], mistakes: ["添字の範囲外アクセス", "初期化子の個数不足"], points: ["0から始まる添字", "配列の初期化"] },
+  { id: "characters", title: "文字と文字コード", category: "文字", level: "basic", estimatedMinutes: 15, summary: "char型と文字コードの関係を学びます。", syntax: "char は1文字を保存し、内部では文字コード（整数）を持ちます。", code: "char c = \'A\';\nprintf(\"%c %d\\n\", c, c);", lines: ["文字Aを保存します。", "A 65 を表示します。"], mistakes: ["charと文字列を混同する", "%cと%dを取り違える"], points: ["ASCIIコード", "charは整数型"] },
+  { id: "strings", title: "文字列", category: "文字列", level: "basic", estimatedMinutes: 25, summary: "char配列とナル文字\0で文字列を表現する仕組みを学びます。", syntax: "char s[] = \"ABC\"; のように宣言し、末尾に\0が付きます。", code: "char s[] = \"CAT\";\ns[0] = \'B\';\nprintf(\"%s %c\\n\", s, s[1]);", lines: ["CATを保存します。", "先頭をBに変更します。", "BAT Aを表示します。"], mistakes: ["\0を書き忘れる", "charとchar[]を混同する"], points: ["ナル文字", "文字列リテラル"] },
+  { id: "functions", title: "関数", category: "関数", level: "basic", estimatedMinutes: 25, summary: "処理をまとめて再利用する関数を学びます。", syntax: "戻り値の型 名前(引数) { 処理 } で定義します。", code: "int add(int a, int b) { return a + b; }\nprintf(\"%d\\n\", add(3, 5));", lines: ["2つの整数を足す関数を定義します。", "3+5の8を表示します。"], mistakes: ["returnを書き忘れる", "プロトタイプ宣言と定義の不一致"], points: ["引数と戻り値", "プロトタイプ宣言"] },
+  { id: "include", title: "#include", category: "プリプロセッサ", level: "basic", estimatedMinutes: 15, summary: "標準関数の宣言をヘッダから取り込む方法を学びます。", syntax: "#include <stdio.h> でprintfやscanfの宣言を利用できます。", code: "#include <stdio.h>\n#include <ctype.h>\n\nint main(void) {\n    printf(\"%d\\n\", isdigit(\'7\') != 0);\n    return 0;\n}", lines: ["標準入出力ヘッダです。", "文字判定ヘッダです。", "main関数です。", "7が数字なら1を表示します。", "正常終了します。"], mistakes: ["必要なヘッダを読み込まない", "#includeの末尾にセミコロンを付ける"], points: ["stdio.h", "山括弧とダブルクォート"] },
+  { id: "define", title: "#define", category: "プリプロセッサ", level: "standard", estimatedMinutes: 20, summary: "コンパイル前の文字置換で記号定数を定義します。", syntax: "#define 名前 値 の末尾には通常セミコロンを付けません。", code: "#define TAX 10\n\nint price = 1000;\nprintf(\"%d\\n\", price + price * TAX / 100);", lines: ["TAXを10に置き換える定義です。", "価格を用意します。", "税込1100を表示します。"], mistakes: ["定義の末尾にセミコロンを入れる", "マクロ引数を括弧で囲まない"], points: ["単純な文字置換", "マクロとconstの違い"] },
+  { id: "ctype", title: "ctype.h系関数", category: "ctype.h", level: "standard", estimatedMinutes: 25, summary: "文字の種類判定と大文字・小文字変換を学びます。", syntax: "isdigit、isalphaは判定、toupper、tolowerは変換に使います。", code: "char c = \'b\';\nif (isalpha(c)) {\n    putchar(toupper(c));\n}", lines: ["小文字bを用意します。", "英字かどうか判定します。", "大文字Bへ変換して表示します。"], mistakes: ["戻り値が必ず1だと思う", "ctype.hを読み込まない"], points: ["0か0以外で真偽判定", "文字変換関数"] },
+  { id: "reading", title: "コード読解", category: "コード読解", level: "exam", estimatedMinutes: 35, summary: "変数の変化を追い、コード全体の動きを正確に読み取ります。", syntax: "表を作って、各行を実行した後の変数値を順に記録します。", code: "int a = 1, b = 2;\na = a + b;\nb = a - b;\nprintf(\"%d %d\\n\", a, b);", lines: ["a=1、b=2です。", "aは3になります。", "bは3-2で1になります。", "3 1を表示します。"], mistakes: ["代入前の値と後の値を混ぜる", "演算子の優先順位を飛ばす"], points: ["トレース表", "代入と評価順序"] },
+  { id: "output", title: "実行結果予測", category: "実行結果予測", level: "exam", estimatedMinutes: 35, summary: "ループ・条件・演算を組み合わせた出力問題に取り組みます。", syntax: "初期値、条件、処理、更新の4点を分けて追います。", code: "for (int i = 1; i <= 4; i++) {\n    if (i % 2 == 0) printf(\"%d\", i);\n}", lines: ["iを1から4まで動かします。", "2で割り切れるときだけ表示します。", "結果は24です。"], mistakes: ["改行や空白の有無を見落とす", "後置++の値をすぐ増えた値で読む"], points: ["出力の空白と改行", "ループと条件の組み合わせ"] },
+  { id: "comprehensive", title: "総合問題", category: "総合問題", level: "exam", estimatedMinutes: 45, summary: "試験範囲を組み合わせ、知識を本番形式で確認します。", syntax: "まず出題分野を見抜き、入力・処理・出力に分けて考えます。", code: "int a[] = {3, 1, 4, 2};\nint max = a[0];\nfor (int i = 1; i < 4; i++) {\n    if (a[i] > max) max = a[i];\n}\nprintf(\"%d\\n\", max);", lines: ["4要素の配列です。", "最初の値を最大値候補にします。", "2番目以降を調べます。", "より大きければ更新します。", "最大値4を表示します。"], mistakes: ["複数の知識を一度に追おうとする", "配列の範囲を間違える"], points: ["頻出分野の組み合わせ", "消去法とトレース"] },
+  { id: "file-write", title: "ファイル書き込み", category: "ファイルI/O", level: "advanced", estimatedMinutes: 30, summary: "fopen/fprintf/fcloseでファイルへ書き出す基本を学びます。", syntax: "fopenでファイルを開き、fprintfで書き込み、fcloseで閉じます。", code: "FILE *fp = fopen(\"out.txt\", \"w\");\nfprintf(fp, \"%d\", 5);\nfclose(fp);\nprintf(\"5\");", lines: ["書き込み用ファイルを開きます。", "整数5を書き込みます。", "ファイルを閉じます。", "結果5を表示します。"], mistakes: ["fcloseを忘れる", "モードwとaを取り違える"], points: ["fopenのモード", "fcloseの役割"] },
+  { id: "file-read", title: "ファイル読み込み", category: "ファイルI/O", level: "advanced", estimatedMinutes: 30, summary: "fopen/fgetsでファイルから1行ずつ読み込みます。", syntax: "fgetsは改行まで読み込み、終端に\0を付けます。", code: "FILE *fp = fopen(\"data.txt\", \"r\");\nchar buf[64];\nfgets(buf, sizeof buf, fp);\nprintf(\"%s\", buf);\nfclose(fp);", lines: ["読み込み用ファイルを開きます。", "受信用バッファを用意します。", "1行読み込みます。", "読み込んだ内容を表示します。", "ファイルを閉じます。"], mistakes: ["バッファサイズを指定しない", "fopen失敗を確認しない"], points: ["fgetsの使い方", "エラー確認の習慣"] },
+  { id: "split-compile", title: "分割コンパイル", category: "分割コンパイル", level: "advanced", estimatedMinutes: 25, summary: "複数ファイルに分けてビルドする方法を理解します。", syntax: "ヘッダに関数宣言、ソースに定義を置き、リンクして1つの実行ファイルを作ります。", code: "/* calc.h */\nint add(int a, int b);\n/* calc.c */\nint add(int a, int b) { return a + b; }\n/* main.c */\n#include \"calc.h\"\nint main(void) { printf(\"%d\", add(1, 1)); return 0; }", lines: ["ヘッダで関数を宣言します。", "ソースで関数を定義します。", "mainから呼び出します。", "1+1の2を表示します。"], mistakes: ["ヘッダで関数を定義してしまう", "externを忘れる"], points: ["宣言と定義の違い", "ヘッダの二重include防止"] },
+  { id: "linked-list", title: "連結リスト", category: "データ構造", level: "advanced", estimatedMinutes: 35, summary: "構造体とポインタで連結リストを作る基本を学びます。", syntax: "自己参照構造体に next ポインタを繋いでリストを表現します。", code: "typedef struct Node { int value; struct Node *next; } Node;\nNode a = {1, NULL}, b = {2, NULL}, c = {3, NULL};\na.next = &b; b.next = &c;\nfor (Node *p = &a; p; p = p->next) printf(\"%d \", p->value);", lines: ["自己参照構造体を定義します。", "3つのノードを用意します。", "nextを後ろへ繋ぎます。", "先頭から順に値を表示します。"], mistakes: ["nextの繋ぎ忘れ", "NULL終端を忘れる"], points: ["自己参照構造体", "走査とメモリ"] },
+  { id: "binary-search", title: "二分探索", category: "アルゴリズム", level: "advanced", estimatedMinutes: 30, summary: "ソート済み配列を半分に分けて高速に探索します。", syntax: "low/high/midを管理し、比較結果に応じて探索範囲を絞ります。", code: "int a[] = {1, 3, 5, 7, 9};\nint low = 0, high = 4, target = 7, mid, idx = -1;\nwhile (low <= high) { mid = (low + high) / 2; if (a[mid] == target) { idx = mid; break; } else if (a[mid] < target) low = mid + 1; else high = mid - 1; }\nprintf(\"%d\", idx);", lines: ["ソート済み配列を用意します。", "探索範囲をlow〜highで管理します。", "中央値と比較します。", "一致すれば終了、違えば範囲を半分に絞ります。", "見つかったインデックス2を表示します。"], mistakes: ["low/highの境界を間違える", "ソート済みでない配列に使う"], points: ["計算量O(log n)", "境界条件"] },
+  { id: "unit-test", title: "assertで単体テスト", category: "テストとデバッグ", level: "advanced", estimatedMinutes: 25, summary: "assertで関数の戻り値を確認し、バグを早期発見します。", syntax: "assert(条件)が偽のとき、メッセージとともにプログラムを停止します。", code: "int square(int x) { return x * x; }\nint main(void) { assert(square(3) == 9); printf(\"OK\"); return 0; }", lines: ["二乗を返す関数を定義します。", "3の二乗が9か確認します。", "OKと表示して終了します。"], mistakes: ["副作用のある式をassertに入れる", "リリースビルドでassertを消し忘れる"], points: ["assert.hの読み込み", "NDEBUGとの関係"] },
+];
+
+export const lessons: Lesson[] = seeds.map((seed) => ({
+  id: seed.id,
+  title: seed.title,
+  category: seed.category,
+  level: seed.level,
+  estimatedMinutes: seed.estimatedMinutes,
+  summary: seed.summary,
+  learningGoals: [
+    `${seed.title}の役割を自分の言葉で説明する`,
+    "基本構文を読み、処理される順番を追う",
+    "変数や出力がどのように変化するか予測する",
+    "3級でよく出る間違いを見分ける",
+  ],
+  whyImportant: `${seed.title}は、C言語のコードを「記号の集まり」ではなく、コンピューターへの手順として読むために必要です。プログラムでは、入力された値を変数へ保存し、条件を調べ、必要な回数だけ処理して、最後に結果を出力します。このレッスンの知識はその流れの一部を担当します。ここを曖昧にしたまま進むと、少し長いコードになっただけで、どの行がいつ実行されるのか分からなくなります。反対に、構文の形と値の変化を一つずつ追えるようになると、初めて見る問題でも落ち着いて判断できます。`,
+  beginnerPitfalls: [
+    ...seed.mistakes,
+    "コードを一度に全部理解しようとして、実行順を飛ばしてしまう",
+    "表示される文字と、変数の中に保存されている値を混同する",
+  ],
+  examPattern: `C言語3級では、${seed.title}の用語を答えるだけでなく、短いコードを読んで実行結果、最終的な変数の値、正しい構文を選ぶ形で問われます。特に境界値、演算の順序、繰り返し回数、空白や改行の有無に注意が必要です。`,
+  keyPoints: [...seed.points, "コードは上から実行順に追う", "値が変わる行では変化後の値をメモする"],
+  todayGoal: `${seed.title}を使った短いコードを読み、結果を予測し、基本例を自分で書けるようになること。`,
+  whyItMatters: `${seed.title}は、C言語3級の問題を読むための土台です。ここを理解すると、コードの意味を暗記ではなく順序立てて判断できます。`,
+  content: `${seed.syntax}\n\n最初はすべてを覚えようとせず、「何を入力し、どの順番で処理し、何を出力するか」に分けて読みましょう。例題では変数の値を紙に書きながら追うのが効果的です。\n\nC言語では、記号が一つ違うだけで意味が変わることがあります。丸括弧、波括弧、セミコロン、変換指定子を目で追い、構文のまとまりを確認してください。実行結果予測では、各行を実行した直後の変数値を小さな表にすると、頭の中だけで考えるより正確です。`,
+  contentSections: [
+    {
+      title: "概念をつかむ",
+      body: `${seed.title}は「何をする構文・機能なのか」「どの時点で動くのか」「値をどのように変えるのか」の3点に分けると理解しやすくなります。まず役割を確認し、その後で記号の書き方を覚えましょう。`,
+    },
+    {
+      title: "基本文法",
+      body: `${seed.syntax} 構文を暗記するだけではなく、各部分が何を表すか確認してください。C言語3級では、似た記号を入れ替えた選択肢や、1か所だけ誤ったコードがよく出ます。`,
+      code: seed.code,
+    },
+    {
+      title: "実行順と値の追い方",
+      body: "初期値を書き、条件を確認し、処理後の値を書き、更新後の値を書く、という順番を崩さないことが大切です。出力がある行では、空白・改行・表示形式も結果の一部として記録します。",
+    },
+    {
+      title: "エラーの直し方",
+      body: `まずコンパイルエラーが示す行の一つ前まで確認します。${seed.mistakes.join("、")}といった間違いがないか、型、記号、括弧の対応を順に見直してください。`,
+    },
+  ],
+  codeExamples: [{
+    title: `${seed.title}の基本例`,
+    description: `${seed.title}の最小構成を、実行順に確認する例です。`,
+    code: seed.code,
+    output: expectedOutputs[seed.id],
+    explanation: `${seed.title}の基本的な使い方です。実行順に上から読み、値が変化する行では変化後の値を記録しましょう。`,
+    lineByLine: seed.lines,
+  }],
+  exercises: [{
+    id: `${seed.id}-exercise-1`,
+    title: `${seed.title}を使って結果を出力しよう`,
+    description: `基本例を参考に、${seed.title}の処理が分かるCプログラムを完成させてください。実行ボタンでは、必要な構文と期待される出力を確認します。`,
+    starterCode: starterProgram(seed),
+    stdin: exerciseInputs[seed.id],
+    expectedOutput: expectedOutputs[seed.id],
+    requirements: [`${seed.title}で学んだ構文を使う`, "main関数を正常終了させる", "期待される結果を出力する"],
+    hints: [`基本例の${seed.lines[0] ?? "最初の行"}に注目してください。`, "セミコロン、丸括弧、波括弧の対応を確認しましょう。"],
+    guideSteps: [
+      `STEP 1: ${seed.title}で必要な変数や定数を宣言する`,
+      ...seed.lines.slice(0, 3).map((line, index) => `STEP ${index + 2}: ${line}`),
+      `STEP ${Math.min(seed.lines.length, 3) + 2}: 実行前に、期待される結果「${expectedOutputs[seed.id] || "正常終了"}」になるか確認する`,
+    ],
+    solution: completeProgram(seed),
+    explanation: `模範解答では、${seed.title}の基本構文を使い、処理の開始から出力、正常終了までを一つのプログラムとしてまとめています。`,
+    examPoint: `${seed.points.join("、")}を見分けられるかが重要です。実行結果だけでなく、どの行で値が変わるかも確認しましょう。`,
+  }],
+  commonMistakes: seed.mistakes,
+  examPoints: seed.points,
+  summaryPoints: [
+    `${seed.title}の役割と基本構文`,
+    "処理される順番と値の変化",
+    ...seed.points,
+  ].slice(0, 5),
+  miniQuizIds: (() => {
+    const categoryIndex = Math.max(0, questionCategoryOrder.indexOf(seed.category));
+    return [`q-${String(categoryIndex + 1).padStart(2, "0")}-01`, `q-${String(categoryIndex + 1).padStart(2, "0")}-02`];
+  })(),
+  questionCount: 6,
+}));
+
+export const lessonById = Object.fromEntries(lessons.map((lesson) => [lesson.id, lesson]));

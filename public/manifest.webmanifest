@@ -1,0 +1,10 @@
+{
+  "name": "C PASS LAB",
+  "short_name": "C PASS",
+  "description": "C言語3級 AI学習サイト",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#090b10",
+  "theme_color": "#090b10",
+  "icons": []
+}
