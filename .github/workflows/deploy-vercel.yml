@@ -72,7 +72,7 @@ jobs:
         working-directory: ./ts-pass-lab
         run: |
           if [[ "${{ inputs.target }}" == "production" ]]; then
-            vercel deploy --prod --yes --token "${{ secrets.VERCEL_TOKEN }}" --scope rikishin1101-6295s-projects --build-env GEMINI_API_KEY="${{ secrets.GEMINI_API_KEY }}" || true
+            vercel deploy --prod --yes --token "${{ secrets.VERCEL_TOKEN }}" --scope rikishin1101-6295s-projects --build-env GEMINI_API_KEY="${{ secrets.GEMINI_API_KEY }}"
           else
-            vercel deploy --yes --token "${{ secrets.VERCEL_TOKEN }}" --scope rikishin1101-6295s-projects --build-env GEMINI_API_KEY="${{ secrets.GEMINI_API_KEY }}" || true
+            vercel deploy --yes --token "${{ secrets.VERCEL_TOKEN }}" --scope rikishin1101-6295s-projects --build-env GEMINI_API_KEY="${{ secrets.GEMINI_API_KEY }}"
           fi
