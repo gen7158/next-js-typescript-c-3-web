@@ -1,0 +1,90 @@
+name: Deploy to Vercel
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Vercel environment'
+        required: true
+        type: choice
+        default: 'production'
+        options:
+          - production
+          - preview
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  c-lab:
+    name: Deploy C言語版 → Vercel
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' || inputs.environment
+    environment:
+      name: ${{ inputs.environment || 'production' }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Vercel CLI
+        run: npm install -g vercel@latest
+      - name: Pull Vercel project info
+        working-directory: ./
+        run: |
+          vercel pull --yes \
+            --token "${{ secrets.VERCEL_TOKEN }}" \
+            --scope rikishin1101-6295s-projects
+        env:
+          VERCEL_ORG_ID: team_TGWG4KMuj86ADOJ3NlPUaJN7
+          VERCEL_PROJECT_ID: prj_AYeTag5S9OU5oLPeavnm3GX0KpYH
+      - name: Deploy to Vercel
+        working-directory: ./
+        run: |
+          if [[ "${{ github.event_name }}" == "push" && "${{ github.ref }}" == "refs/heads/main" ]]; then
+            vercel deploy --prod --yes \
+              --token "${{ secrets.VERCEL_TOKEN }}" \
+              --scope rikishin1101-6295s-projects
+          else
+            vercel deploy --yes \
+              --token "${{ secrets.VERCEL_TOKEN }}" \
+              --scope rikishin1101-6295s-projects
+          fi
+        env:
+          VERCEL_ORG_ID: team_TGWG4KMuj86ADOJ3NlPUaJN7
+          VERCEL_PROJECT_ID: prj_AYeTag5S9OU5oLPeavnm3GX0KpYH
+
+  ts-lab:
+    name: Deploy TypeScript版 → Vercel
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' || inputs.environment
+    environment:
+      name: ${{ inputs.environment || 'production' }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Vercel CLI
+        run: npm install -g vercel@latest
+      - name: Pull Vercel project info
+        working-directory: ./ts-pass-lab
+        run: |
+          vercel pull --yes \
+            --token "${{ secrets.VERCEL_TOKEN }}" \
+            --scope rikishin1101-6295s-projects
+        env:
+          VERCEL_ORG_ID: team_TGWG4KMuj86ADOJ3NlPUaJN7
+          VERCEL_PROJECT_ID: prj_Sdlp5s1AsRsQHTvwkMeNsE5e54w5
+      - name: Deploy to Vercel
+        working-directory: ./ts-pass-lab
+        run: |
+          if [[ "${{ github.event_name }}" == "push" && "${{ github.ref }}" == "refs/heads/main" ]]; then
+            vercel deploy --prod --yes \
+              --token "${{ secrets.VERCEL_TOKEN }}" \
+              --scope rikishin1101-6295s-projects
+          else
+            vercel deploy --yes \
+              --token "${{ secrets.VERCEL_TOKEN }}" \
+              --scope rikishin1101-6295s-projects
+          fi
+        env:
+          VERCEL_ORG_ID: team_TGWG4KMuj86ADOJ3NlPUaJN7
+          VERCEL_PROJECT_ID: prj_Sdlp5s1AsRsQHTvwkMeNsE5e54w5
