@@ -31,9 +31,14 @@ jobs:
       - uses: actions/checkout@v4
       - name: Install Vercel CLI
         run: npm install -g vercel@latest
+      - name: Configure .vercel/project.json
+        working-directory: ./
+        run: |
+          mkdir -p .vercel
+          printf '{"projectId":"prj_AYeTag5S9OU5oLPeavnm3GX0KpYH","orgId":"team_TGWG4KMuj86ADOJ3NlPUaJN7","projectName":"next-js-typescript-c-3-web"}\n' > .vercel/project.json
       - name: Pull Vercel project info
         working-directory: ./
-        run: vercel pull --yes --token "${{ secrets.VERCEL_TOKEN }}" --scope rikishin1101-6295s-projects
+        run: vercel pull --yes --token "${{ secrets.VERCEL_TOKEN }}" --scope rikishin1101-6295s-projects || true
       - name: Deploy to Vercel
         working-directory: ./
         run: |
@@ -42,8 +47,6 @@ jobs:
           else
             vercel deploy --yes --token "${{ secrets.VERCEL_TOKEN }}" --scope rikishin1101-6295s-projects
           fi
-        env:
-          VERCEL_PROJECT_ID: prj_AYeTag5S9OU5oLPeavnm3GX0KpYH
 
   ts-lab:
     name: Deploy TypeScript版 (ts-pass-lab-v2)
@@ -55,24 +58,21 @@ jobs:
       - uses: actions/checkout@v4
       - name: Install Vercel CLI
         run: npm install -g vercel@latest
-      - name: Pull Vercel project info
-        # 新プロジェクト ts-pass-lab-v2 は Vercel 側で Root Directory: ts-pass-lab 設定済み
+      - name: Configure .vercel/project.json
+        # Vercel プロジェクトの Root Directory 設定(ts-pass-lab) と一致する位置で生成
         working-directory: ./ts-pass-lab
         run: |
-          # 新プロジェクトの .vercel/project.json を一時生成
           mkdir -p .vercel
           printf '{"projectId":"prj_noYfpHgVtCNjFMGDsOjIw3llZ9JV","orgId":"team_TGWG4KMuj86ADOJ3NlPUaJN7","projectName":"ts-pass-lab-v2"}\n' > .vercel/project.json
-          # Vercel pull で .env 取得
-          vercel pull --yes --token "${{ secrets.VERCEL_TOKEN }}" --scope rikishin1101-6295s-projects || true
+      - name: Pull Vercel project info
+        working-directory: ./ts-pass-lab
+        run: vercel pull --yes --token "${{ secrets.VERCEL_TOKEN }}" --scope rikishin1101-6295s-projects || true
       - name: Deploy to Vercel
-        # 親ディレクトリ (next-js-typescript-c-3-web/) から実行することで
-        # Vercel の Root Directory: ts-pass-lab が正しく解決される
-        working-directory: ./
+        # 同じ working-directory 配下の .vercel/project.json を Vercel CLI が読み込んでデプロイ
+        working-directory: ./ts-pass-lab
         run: |
           if [[ "${{ inputs.target }}" == "production" ]]; then
             vercel deploy --prod --yes --token "${{ secrets.VERCEL_TOKEN }}" --scope rikishin1101-6295s-projects
           else
             vercel deploy --yes --token "${{ secrets.VERCEL_TOKEN }}" --scope rikishin1101-6295s-projects
           fi
-        env:
-          VERCEL_PROJECT_ID: prj_noYfpHgVtCNjFMGDsOjIw3llZ9JV
