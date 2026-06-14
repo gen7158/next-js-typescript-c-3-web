@@ -1,0 +1,47 @@
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Asia/Tokyo"
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "deps(c)"
+    labels:
+      - "dependencies"
+    groups:
+      production:
+        dependency-type: "production"
+      development:
+        dependency-type: "development"
+  - package-ecosystem: "npm"
+    directory: "/ts-pass-lab"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Asia/Tokyo"
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "deps(ts)"
+    labels:
+      - "dependencies"
+    groups:
+      production:
+        dependency-type: "production"
+      development:
+        dependency-type: "development"
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Asia/Tokyo"
+    commit-message:
+      prefix: "ci"
+    labels:
+      - "ci"
