@@ -1,38 +1,77 @@
 # 学習サイト開発ガイド
 
 [![CI](https://github.com/gen7158/next-js-typescript-c-3-web/actions/workflows/ci.yml/badge.svg)](https://github.com/gen7158/next-js-typescript-c-3-web/actions/workflows/ci.yml)
+[![Deploy to Vercel](https://img.shields.io/badge/Vercel-Deploy-000?logo=vercel)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fgen7158%2Fnext-js-typescript-c-3-web)
 ![Next.js](https://img.shields.io/badge/Next.js-16.2-black)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue)
-![Vercel](https://img.shields.io/badge/Vercel-Deploy-000?logo=vercel)
 
 C言語3級パスラボ（Next.js 16 + TypeScript）と、TypeScript版パスラボ（フルスタック＋基礎）を1リポジトリで管理するモノレポです。
 
-- **C言語版**: [next-js-typescript-c-3-web.vercel.app](https://next-js-typescript-c-3-web.vercel.app)
-- **TypeScript版**: [ts-pass-lab.vercel.app](https://ts-pass-lab.vercel.app)
+- **C言語版**: https://next-js-typescript-c-3-web.vercel.app
+- **TypeScript版**: https://ts-pass-lab.vercel.app
 
-正本ディレクトリ、検証方法、Vercel デプロイ手順、CI 設計の詳細は
-[PROJECT_GUIDE.md](./PROJECT_GUIDE.md) を参照してください。
+> 📘 詳細は [PROJECT_GUIDE.md](./PROJECT_GUIDE.md) を参照
 
-## リポジトリ構成
+## 🚀 ワンクリックセットアップ
+
+このリポジトリを **そのまま自分の Vercel アカウントにデプロイ** できます:
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fgen7158%2Fnext-js-typescript-c-3-web&env=GEMINI_API_KEY&envDescription=Gemini%20API%20key%20from%20https%3A%2F%2Faistudio.google.com%2Fapikey&envLink=https%3A%2F%2Faistudio.google.com%2Fapikey&project-name=pass-lab&root-directory=ts-pass-lab)
+
+または、フォーク後 **GitHub 連携 + Vercel Dashboard** で2プロジェクトに分割デプロイ:
+
+| プロジェクト | Root Directory | 用途 |
+|---|---|---|
+| `next-js-typescript-c-3-web` | `.` | C言語版 → `next-js-typescript-c-3-web.vercel.app` |
+| `ts-pass-lab` | `ts-pass-lab` | TypeScript版 → `ts-pass-lab.vercel.app` |
+
+## 🔧 環境変数の簡単設定
+
+`ts-pass-lab/.env.example` を編集後、以下のコマンドで **ブラウザを開かずに** Vercel に環境変数を一括登録:
+
+```bash
+export VERCEL_TOKEN="vcp_..."  # https://vercel.com/account/tokens で発行
+export GEMINI_API_KEY="AIza..."  # https://aistudio.google.com/apikey で発行
+
+# 1) Vercel 側の環境変数を設定
+./scripts/setup-vercel.sh
+
+# 2) GitHub Actions 用の Secrets を設定
+export GITHUB_TOKEN="ghp_..."  # repo + workflow スコープ付き PAT
+./scripts/setup-github-secrets.sh
+```
+
+これで **main への push 時に自動デプロイ + 自動 CI チェック** が走ります。
+
+## 📦 リポジトリ構成
 
 ```text
 next-js-typescript-c-3-web/
 ├── app/                # C言語版 Next.js App Router
 ├── components/         # C言語版 共通コンポーネント
-├── data/               # 30 講座（基礎 24 + 発展 6）のデータ
+├── data/               # 30 講座（基礎 24 + 発展 6）
 ├── lib/                # C言語版 ライブラリ
 ├── store/              # C言語版 学習状態管理
 ├── types/              # 共通型
-├── ts-pass-lab/        # TypeScript版 Next.js App Router（サブプロジェクト）
+├── ts-pass-lab/        # TypeScript版 Next.js App Router
 │   ├── src/app/        # ルーティング
 │   ├── src/components/ # AIチューター、コードエディタ等
 │   ├── src/data/       # 39 講座（基礎 + フルスタック + 発展）
 │   └── src/app/api/    # 9 種の API ルート
-├── .github/workflows/  # GitHub Actions CI
-└── .github/dependabot.yml
+├── scripts/
+│   ├── setup-vercel.sh        # Vercel 環境変数一括登録
+│   └── setup-github-secrets.sh # GitHub Secrets 一括登録
+├── .github/workflows/
+│   ├── ci.yml                  # typecheck / lint / build
+│   ├── dependabot-auto-merge.yml  # Dependabot PR 自動マージ
+│   └── deploy-vercel.yml       # main push で Vercel デプロイ
+├── vercel.json
+├── .env.example
+├── README.md
+└── PROJECT_GUIDE.md
 ```
 
-## ローカル起動
+## 💻 ローカル起動
 
 ```bash
 # C言語版
@@ -45,9 +84,9 @@ npm install
 npm run dev          # http://localhost:3000
 ```
 
-## 品質チェック（typecheck / lint / build）
+## ✅ 品質チェック
 
-両プロジェクトで同じコマンドが使えます。
+両プロジェクトで同じコマンドが使えます:
 
 ```bash
 npm run typecheck    # tsc --noEmit
@@ -55,31 +94,20 @@ npm run lint         # eslint .
 npm run build        # next build
 ```
 
-## Vercel デプロイ
-
-```bash
-# C言語版
-cd /Users/shinjourikunozomi/Documents/Codex/2026-06-11/next-js-typescript-c-3-web
-vercel deploy --prod --yes \
-  --token $VERCEL_TOKEN \
-  --scope rikishin1101-6295s-projects
-
-# TypeScript版（プロジェクトの Root Directory が ts-pass-lab のため、サブパス内から）
-cd ts-pass-lab
-vercel deploy --prod --yes \
-  --token $VERCEL_TOKEN \
-  --scope rikishin1101-6295s-projects
-```
-
-## CI / Dependabot
+## 🤖 CI / Dependabot
 
 - **CI**: `.github/workflows/ci.yml`
-  - main ブランチへの push / PR で C言語版と TypeScript版の両方を typecheck + lint + build
-  - 同じブランチへの再 push は進行中ジョブを自動キャンセル（`concurrency.cancel-in-progress: true`）
+  - C言語版と TypeScript版を並列に typecheck + lint + build
 - **Dependabot**: `.github/dependabot.yml`
-  - 週次（月曜 09:00 JST）で `npm` 依存関係と GitHub Actions を更新
-  - `npm` 更新は C言語版・TypeScript版それぞれ別 PR
+  - 週次で `npm` 依存関係と GitHub Actions を更新
+- **Dependabot 自動マージ**: `.github/workflows/dependabot-auto-merge.yml`
+  - patch/minor リリースは CI 通過後に自動マージ
+- **自動デプロイ**: `.github/workflows/deploy-vercel.yml`
+  - main push 時に GitHub Actions から Vercel Production へデプロイ
 
-## 環境変数
+## 📚 ドキュメント
 
-Vercel Dashboard → `ts-pass-lab` → Settings → Environment Variables で `GEMINI_API_KEY` を Production に設定してください。CI では未使用、本番のみで参照されます。
+- [PROJECT_GUIDE.md](./PROJECT_GUIDE.md) — プロジェクトの正本ディレクトリ、修正方針、検証手順、Vercel デプロイの詳細
+- [ts-pass-lab/.env.example](./ts-pass-lab/.env.example) — TypeScript版で必要な環境変数のテンプレート
+- [scripts/setup-vercel.sh](./scripts/setup-vercel.sh) — Vercel 環境変数のセットアップスクリプト
+- [scripts/setup-github-secrets.sh](./scripts/setup-github-secrets.sh) — GitHub Secrets のセットアップスクリプト
