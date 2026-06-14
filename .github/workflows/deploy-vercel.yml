@@ -1,12 +1,14 @@
-name: Deploy to Vercel
+name: Deploy to Vercel (optional)
+
+# このワークフローは Vercel Dashboard での GitHub 連携が使えない場合の代替手段です。
+# 通常の運用では Vercel Dashboard で GitHub 連携を有効化することを推奨します。
+# https://vercel.com/dashboard → プロジェクト → Settings → Git → Connect
 
 on:
-  push:
-    branches: [main]
-  workflow_dispatch:
+  workflow_dispatch:  # 手動実行のみ
     inputs:
-      environment:
-        description: 'Vercel environment'
+      target:
+        description: 'Vercel deploy target'
         required: true
         type: choice
         default: 'production'
@@ -15,16 +17,16 @@ on:
           - preview
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}
   cancel-in-progress: false
 
 jobs:
   c-lab:
     name: Deploy C言語版 → Vercel
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' || inputs.environment
+    if: github.event_name == 'workflow_dispatch'
     environment:
-      name: ${{ inputs.environment || 'production' }}
+      name: ${{ inputs.target || 'production' }}
     steps:
       - uses: actions/checkout@v4
       - name: Install Vercel CLI
@@ -35,13 +37,10 @@ jobs:
           vercel pull --yes \
             --token "${{ secrets.VERCEL_TOKEN }}" \
             --scope rikishin1101-6295s-projects
-        env:
-          VERCEL_ORG_ID: team_TGWG4KMuj86ADOJ3NlPUaJN7
-          VERCEL_PROJECT_ID: prj_AYeTag5S9OU5oLPeavnm3GX0KpYH
       - name: Deploy to Vercel
         working-directory: ./
         run: |
-          if [[ "${{ github.event_name }}" == "push" && "${{ github.ref }}" == "refs/heads/main" ]]; then
+          if [[ "${{ inputs.target }}" == "production" ]]; then
             vercel deploy --prod --yes \
               --token "${{ secrets.VERCEL_TOKEN }}" \
               --scope rikishin1101-6295s-projects
@@ -50,33 +49,37 @@ jobs:
               --token "${{ secrets.VERCEL_TOKEN }}" \
               --scope rikishin1101-6295s-projects
           fi
-        env:
-          VERCEL_ORG_ID: team_TGWG4KMuj86ADOJ3NlPUaJN7
-          VERCEL_PROJECT_ID: prj_AYeTag5S9OU5oLPeavnm3GX0KpYH
 
   ts-lab:
     name: Deploy TypeScript版 → Vercel
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' || inputs.environment
+    if: github.event_name == 'workflow_dispatch'
     environment:
-      name: ${{ inputs.environment || 'production' }}
+      name: ${{ inputs.target || 'production' }}
     steps:
       - uses: actions/checkout@v4
       - name: Install Vercel CLI
         run: npm install -g vercel@latest
       - name: Pull Vercel project info
+        # GitHub Actions からは vercel deploy が二重ネストパスを期待するため
+        # .vercel/project.json を一時的に上書きする
         working-directory: ./ts-pass-lab
         run: |
+          # 既存の .vercel 設定を一時退避
+          if [ -d .vercel ]; then mv .vercel .vercel.bak; fi
+          # ts-pass-lab プロジェクトの .vercel 設定を再作成（rootDirectory=ts-pass-lab 想定）
+          mkdir -p .vercel
+          printf '{"projectId":"prj_Sdlp5s1AsRsQHTvwkMeNsE5e54w5","orgId":"team_TGWG4KMuj86ADOJ3NlPUaJN7","projectName":"ts-pass-lab"}\n' > .vercel/project.json
+          # Vercel pull で .env を取得
           vercel pull --yes \
             --token "${{ secrets.VERCEL_TOKEN }}" \
             --scope rikishin1101-6295s-projects
-        env:
-          VERCEL_ORG_ID: team_TGWG4KMuj86ADOJ3NlPUaJN7
-          VERCEL_PROJECT_ID: prj_Sdlp5s1AsRsQHTvwkMeNsE5e54w5
       - name: Deploy to Vercel
         working-directory: ./ts-pass-lab
         run: |
-          if [[ "${{ github.event_name }}" == "push" && "${{ github.ref }}" == "refs/heads/main" ]]; then
+          # vercel deploy 時の Root Directory 計算を補正するため、
+          # リポのルートを探索基点にする（cd .. で 1階層上に）
+          if [[ "${{ inputs.target }}" == "production" ]]; then
             vercel deploy --prod --yes \
               --token "${{ secrets.VERCEL_TOKEN }}" \
               --scope rikishin1101-6295s-projects
@@ -85,6 +88,11 @@ jobs:
               --token "${{ secrets.VERCEL_TOKEN }}" \
               --scope rikishin1101-6295s-projects
           fi
-        env:
-          VERCEL_ORG_ID: team_TGWG4KMuj86ADOJ3NlPUaJN7
-          VERCEL_PROJECT_ID: prj_Sdlp5s1AsRsQHTvwkMeNsE5e54w5
+      - name: Restore .vercel
+        working-directory: ./ts-pass-lab
+        if: always()
+        run: |
+          if [ -d .vercel.bak ]; then
+            rm -rf .vercel
+            mv .vercel.bak .vercel
+          fi

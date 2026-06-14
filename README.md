@@ -12,7 +12,7 @@ C言語3級パスラボ（Next.js 16 + TypeScript）と、TypeScript版パスラ
 
 > 📘 詳細は [PROJECT_GUIDE.md](./PROJECT_GUIDE.md) を参照
 
-## 🚀 ワンクリックセットアップ
+## 🚀 Vercel デプロイ
 
 このリポジトリを **そのまま自分の Vercel アカウントにデプロイ** できます:
 
@@ -27,7 +27,9 @@ C言語3級パスラボ（Next.js 16 + TypeScript）と、TypeScript版パスラ
 
 ## 🔧 環境変数の簡単設定
 
-`ts-pass-lab/.env.example` を編集後、以下のコマンドで **ブラウザを開かずに** Vercel に環境変数を一括登録:
+Vercel Dashboard を開かずに、ターミナルから環境変数を一括登録できます。
+
+`ts-pass-lab/.env.example` を編集後、以下のコマンドを実行:
 
 ```bash
 export VERCEL_TOKEN="vcp_..."  # https://vercel.com/account/tokens で発行
@@ -102,8 +104,9 @@ npm run build        # next build
   - 週次で `npm` 依存関係と GitHub Actions を更新
 - **Dependabot 自動マージ**: `.github/workflows/dependabot-auto-merge.yml`
   - patch/minor リリースは CI 通過後に自動マージ
-- **自動デプロイ**: `.github/workflows/deploy-vercel.yml`
-  - main push 時に GitHub Actions から Vercel Production へデプロイ
+- **手動デプロイ（代替手段）**: `.github/workflows/deploy-vercel.yml`
+  - GitHub の Actions タブから手動実行で Vercel へデプロイ可能
+  - 通常の運用では Vercel Dashboard での GitHub 連携を推奨（次節）
 
 ## 📚 ドキュメント
 
