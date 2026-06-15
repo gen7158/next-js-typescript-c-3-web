@@ -1,6 +1,6 @@
 # プロジェクト運用・修正・デプロイガイド
 
-最終更新: 2026年6月14日（GitHub 移行 + CI/Dependabot 追加）
+最終更新: 2026年6月15日（Vercel GitHub連携 + Gemini本番設定）
 
 ## 1. プロジェクトの正本
 
@@ -86,7 +86,7 @@ GitHub: gen7158/next-js-typescript-c-3-web
   │   ├─ GitHub Actions: typecheck + lint + build（C言語版・TypeScript版 並列）
   │   └─ Vercel: 自動デプロイ
   │       ├─ next-js-typescript-c-3-web プロジェクト（Root Directory = .）
-  │       └─ ts-pass-lab プロジェクト（Root Directory = ts-pass-lab）
+  │       └─ ts-pass-lab-v2 プロジェクト（リポジトリ直下から ts-pass-lab をビルド）
 ```
 
 ### GitHub Actions
@@ -99,11 +99,14 @@ GitHub: gen7158/next-js-typescript-c-3-web
 
 ### Vercel 設定
 
-- `next-js-typescript-c-3-web` プロジェクト: Root Directory = `.`
-- `ts-pass-lab` プロジェクト: Root Directory = `ts-pass-lab`
-- 環境変数: `GEMINI_API_KEY` を `ts-pass-lab` の Production に設定
+- `next-js-typescript-c-3-web`: リポジトリ直下を通常のNext.jsプロジェクトとしてビルド
+- `ts-pass-lab-v2`: Root Directoryは空のまま、Install Commandを`cd ts-pass-lab && npm install`、Build Commandを`cd ts-pass-lab && npm run build`に設定
+- 両プロジェクトとも`gen7158/next-js-typescript-c-3-web`へ接続済み
+- Vercel GitHub Appのアクセス先は、このリポジトリ1件だけに限定
+- `GEMINI_API_KEY`は`ts-pass-lab-v2`のProductionへ設定済み
+- `.github/workflows/deploy-vercel.yml`は、障害時などに使う手動デプロイ手段として残す
 
-GitHub 連携を有効化するには Vercel Dashboard でプロジェクト → Settings → Git → Connect Git Repository から `gen7158/next-js-typescript-c-3-web` を選択してください。
+通常は`main`へpushするだけで、GitHub ActionsのCIとVercelの本番デプロイが開始されます。
 
 ## 3. 今後の修正方針
 
@@ -360,5 +363,4 @@ Vercel DashboardのDeploymentsから正常だったデプロイを選び、Promo
 2. localStorageデータへバージョン移行関数を追加する
 3. C実行サービス停止時の代替実行先または再試行を用意する
 4. E2Eテストで「受講、実行、保存、次へ、再受講」を自動確認する
-5. 正本をGitリポジトリ化し、変更履歴と本番ロールバックを簡単にする
-
+5. `main`ブランチ保護を設定し、CI成功後だけ変更を取り込めるようにする

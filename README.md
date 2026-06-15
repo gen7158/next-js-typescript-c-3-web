@@ -23,7 +23,10 @@ C言語3級パスラボ（Next.js 16 + TypeScript）と、TypeScript版パスラ
 | プロジェクト | Root Directory | 用途 |
 |---|---|---|
 | `next-js-typescript-c-3-web` | `.` | C言語版 → `next-js-typescript-c-3-web.vercel.app` |
-| `ts-pass-lab` | `ts-pass-lab` | TypeScript版 → `ts-pass-lab.vercel.app` |
+| `ts-pass-lab-v2` | `.`（コマンド内で`cd ts-pass-lab`） | TypeScript版 → `ts-pass-lab.vercel.app` |
+
+2026年6月15日時点で、両VercelプロジェクトはこのGitHubリポジトリへ接続済みです。
+`main`へのpushでCIと本番デプロイが自動実行されます。
 
 ## 🔧 環境変数の簡単設定
 
