@@ -102,6 +102,7 @@ npm run build        # next build
   - C言語版と TypeScript版を並列に typecheck + lint + build
 - **Dependabot**: `.github/dependabot.yml`
   - 週次で `npm` 依存関係と GitHub Actions を更新
+- **Dependabot ルール**: メジャー更新は除外（CI互換性問題回避）。マイナー/パッチのみ自動PR化
 - **Dependabot 自動マージ**: `.github/workflows/dependabot-auto-merge.yml`
   - patch/minor リリースは CI 通過後に自動マージ
 - **手動デプロイ（代替手段）**: `.github/workflows/deploy-vercel.yml`
