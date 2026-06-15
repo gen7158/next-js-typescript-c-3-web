@@ -51,14 +51,14 @@ export GITHUB_TOKEN="ghp_..."  # repo + workflow スコープ付き PAT
 next-js-typescript-c-3-web/
 ├── app/                # C言語版 Next.js App Router
 ├── components/         # C言語版 共通コンポーネント
-├── data/               # 30 講座（基礎 24 + 発展 6）
+├── data/               # 56 講座（基礎 30 + 発展 26）
 ├── lib/                # C言語版 ライブラリ
 ├── store/              # C言語版 学習状態管理
 ├── types/              # 共通型
 ├── ts-pass-lab/        # TypeScript版 Next.js App Router
 │   ├── src/app/        # ルーティング
 │   ├── src/components/ # AIチューター、コードエディタ等
-│   ├── src/data/       # 39 講座（基礎 + フルスタック + 発展）
+│   ├── src/data/       # 約 50 講座（基礎 41 + フルスタック + 発展）
 │   └── src/app/api/    # 9 種の API ルート
 ├── scripts/
 │   ├── setup-vercel.sh        # Vercel 環境変数一括登録
