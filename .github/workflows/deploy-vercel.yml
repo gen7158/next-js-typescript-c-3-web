@@ -59,17 +59,13 @@ jobs:
       - name: Install Vercel CLI
         run: npm install -g vercel@latest
       - name: Configure .vercel/project.json
-        # Vercel プロジェクトの Root Directory 設定(ts-pass-lab) と一致する位置で生成
-        working-directory: ./ts-pass-lab
+        # Vercel側のRoot Directoryがts-pass-labなので、リンク情報はリポジトリ直下に置く
         run: |
           mkdir -p .vercel
           printf '{"projectId":"prj_noYfpHgVtCNjFMGDsOjIw3llZ9JV","orgId":"team_TGWG4KMuj86ADOJ3NlPUaJN7","projectName":"ts-pass-lab-v2"}\n' > .vercel/project.json
       - name: Pull Vercel project info
-        working-directory: ./ts-pass-lab
         run: vercel pull --yes --token "${{ secrets.VERCEL_TOKEN }}" --scope rikishin1101-6295s-projects || true
       - name: Deploy to Vercel
-        # 同じ working-directory 配下の .vercel/project.json を Vercel CLI が読み込んでデプロイ
-        working-directory: ./ts-pass-lab
         run: |
           if [[ "${{ inputs.target }}" == "production" ]]; then
             vercel deploy --prod --yes --token "${{ secrets.VERCEL_TOKEN }}" --scope rikishin1101-6295s-projects --build-env GEMINI_API_KEY="${{ secrets.GEMINI_API_KEY }}"

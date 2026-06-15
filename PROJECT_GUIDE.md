@@ -86,7 +86,7 @@ GitHub: gen7158/next-js-typescript-c-3-web
   │   ├─ GitHub Actions: typecheck + lint + build（C言語版・TypeScript版 並列）
   │   └─ Vercel: 自動デプロイ
   │       ├─ next-js-typescript-c-3-web プロジェクト（Root Directory = .）
-  │       └─ ts-pass-lab-v2 プロジェクト（リポジトリ直下から ts-pass-lab をビルド）
+  │       └─ ts-pass-lab-v2 プロジェクト（Root Directory = ts-pass-lab）
 ```
 
 ### GitHub Actions
@@ -100,7 +100,7 @@ GitHub: gen7158/next-js-typescript-c-3-web
 ### Vercel 設定
 
 - `next-js-typescript-c-3-web`: リポジトリ直下を通常のNext.jsプロジェクトとしてビルド
-- `ts-pass-lab-v2`: Root Directoryは空のまま、Install Commandを`cd ts-pass-lab && npm install`、Build Commandを`cd ts-pass-lab && npm run build`に設定
+- `ts-pass-lab-v2`: Root Directoryを`ts-pass-lab`に設定し、標準のInstall CommandとBuild Commandを使用
 - 両プロジェクトとも`gen7158/next-js-typescript-c-3-web`へ接続済み
 - Vercel GitHub Appのアクセス先は、このリポジトリ1件だけに限定
 - `GEMINI_API_KEY`は`ts-pass-lab-v2`のProductionへ設定済み
