@@ -12,6 +12,13 @@ updates:
       prefix: "deps(c)"
     labels:
       - "dependencies"
+    # メジャー更新は既存プロジェクトの互換性問題を起こしやすいため
+    # マイナー/パッチに限定して自動PRを出す
+    ignore:
+      - dependency-type: "development"
+        update-types: ["version-update:semver-major"]
+      - dependency-type: "production"
+        update-types: ["version-update:semver-major"]
     groups:
       production:
         dependency-type: "production"
@@ -29,6 +36,12 @@ updates:
       prefix: "deps(ts)"
     labels:
       - "dependencies"
+    # TypeScript版も同様: メジャー更新は除外してマイナー/パッチのみ
+    ignore:
+      - dependency-type: "development"
+        update-types: ["version-update:semver-major"]
+      - dependency-type: "production"
+        update-types: ["version-update:semver-major"]
     groups:
       production:
         dependency-type: "production"
