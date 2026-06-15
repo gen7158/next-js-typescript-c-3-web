@@ -1,4 +1,4 @@
-import type { Lesson } from "@/types/lesson";
+import type { Lesson, LessonComment } from "@/types/lesson";
 
 type LessonSeed = Pick<Lesson, "id" | "title" | "category" | "level" | "estimatedMinutes" | "summary"> & {
   syntax: string;
@@ -6,6 +6,7 @@ type LessonSeed = Pick<Lesson, "id" | "title" | "category" | "level" | "estimate
   lines: string[];
   mistakes: string[];
   points: string[];
+  comments?: LessonComment[];
 };
 
 const expectedOutputs: Record<string, string> = {
@@ -87,7 +88,12 @@ function starterProgram(seed: LessonSeed) {
 }
 
 const seeds: LessonSeed[] = [
-  { id: "c-basics", title: "C言語の基本", category: "C言語の基本", level: "basic", estimatedMinutes: 15, summary: "ソースコードから実行までの流れと、main関数の役割を知ります。", syntax: "Cプログラムは main 関数から実行され、文の末尾には ; を付けます。", code: "#include <stdio.h>\n\nint main(void) {\n    printf(\"Hello, C!\\n\");\n    return 0;\n}", lines: ["stdio.hを読み込みます。", "main関数がプログラムの開始地点です。", "文字列を画面に表示します。", "正常終了を表す0を返します。"], mistakes: ["セミコロンを付け忘れる", "全角記号をコードに混ぜる"], points: ["main関数の戻り値", "コメントと文の区切り"] },
+  { id: "c-basics", title: "C言語の基本", category: "C言語の基本", level: "basic", estimatedMinutes: 15, summary: "ソースコードから実行までの流れと、main関数の役割を知ります。", syntax: "Cプログラムは main 関数から実行され、文の末尾には ; を付けます。", code: "#include <stdio.h>\n\nint main(void) {\n    printf(\"Hello, C!\\n\");\n    return 0;\n}", lines: ["stdio.hを読み込みます。", "main関数がプログラムの開始地点です。", "文字列を画面に表示します。", "正常終了を表す0を返します。"], mistakes: ["セミコロンを付け忘れる", "全角記号をコードに混ぜる"], points: ["main関数の戻り値", "コメントと文の区切り"],
+    comments: [
+      { id: 'c-basics-q1', author: 'Codex先生', message: 'コメントは学習者同士で質問をやりとりできる領域です。分からないことは気軽に書き込んでください。', createdAt: '2026-06-15T00:00:00Z', pinned: true },
+      { id: 'c-basics-q2', author: '学生A', message: 'main関数の戻り値0は何を意味しますか?', createdAt: '2026-06-15T01:00:00Z' },
+      { id: 'c-basics-q3', author: 'Codex先生', message: '正常終了を表します。0以外(例えば1)は異常終了のサインです。', createdAt: '2026-06-15T02:00:00Z' },
+    ] },
   { id: "history", title: "C言語の歴史と特徴", category: "C言語の基本", level: "basic", estimatedMinutes: 10, summary: "C言語がどのような言語で、なぜ広く使われているかを学びます。", syntax: "C言語は手続き型のコンパイル言語で、移植性と実行速度に優れます。", code: "/* コメントは実行されません */\nint main(void) {\n    return 0;\n}", lines: ["複数行コメントです。", "main関数を定義します。", "正常終了します。"], mistakes: ["C言語をインタプリタ言語だと覚える", "コメント内の文字が実行されると思う"], points: ["コンパイル言語", "移植性と手続き型"] },
   { id: "printf-scanf", title: "printf / scanf", category: "printf / scanf", level: "basic", estimatedMinutes: 25, summary: "画面への出力とキーボードからの入力を扱います。", syntax: "printfは出力、scanfは入力です。型に合う変換指定子を使います。", code: "int age;\nprintf(\"年齢: \");\nscanf(\"%d\", &age);\nprintf(\"%d歳です\\n\", age);", lines: ["整数用の変数を用意します。", "入力を促す文字を表示します。", "&ageで入力先のアドレスを渡します。", "入力された整数を表示します。"], mistakes: ["scanfで&を忘れる", "%dと%fを取り違える"], points: ["変換指定子", "scanfの&"] },
   { id: "char-io", title: "getchar / putchar", category: "文字", level: "basic", estimatedMinutes: 15, summary: "1文字だけを入力・出力する関数を学びます。", syntax: "getchar()は1文字を読み、putchar()は1文字を表示します。", code: "int ch;\nch = getchar();\nputchar(ch);", lines: ["文字コードを保持できるint型を使います。", "標準入力から1文字読みます。", "読み込んだ1文字を表示します。"], mistakes: ["getcharの戻り値をcharだけで扱う", "文字列をputcharに渡す"], points: ["EOFを扱えるint型", "1文字入出力"] },
@@ -111,6 +117,110 @@ const seeds: LessonSeed[] = [
   { id: "reading", title: "コード読解", category: "コード読解", level: "exam", estimatedMinutes: 35, summary: "変数の変化を追い、コード全体の動きを正確に読み取ります。", syntax: "表を作って、各行を実行した後の変数値を順に記録します。", code: "int a = 1, b = 2;\na = a + b;\nb = a - b;\nprintf(\"%d %d\\n\", a, b);", lines: ["a=1、b=2です。", "aは3になります。", "bは3-2で1になります。", "3 1を表示します。"], mistakes: ["代入前の値と後の値を混ぜる", "演算子の優先順位を飛ばす"], points: ["トレース表", "代入と評価順序"] },
   { id: "output", title: "実行結果予測", category: "実行結果予測", level: "exam", estimatedMinutes: 35, summary: "ループ・条件・演算を組み合わせた出力問題に取り組みます。", syntax: "初期値、条件、処理、更新の4点を分けて追います。", code: "for (int i = 1; i <= 4; i++) {\n    if (i % 2 == 0) printf(\"%d\", i);\n}", lines: ["iを1から4まで動かします。", "2で割り切れるときだけ表示します。", "結果は24です。"], mistakes: ["改行や空白の有無を見落とす", "後置++の値をすぐ増えた値で読む"], points: ["出力の空白と改行", "ループと条件の組み合わせ"] },
   { id: "comprehensive", title: "総合問題", category: "総合問題", level: "exam", estimatedMinutes: 45, summary: "試験範囲を組み合わせ、知識を本番形式で確認します。", syntax: "まず出題分野を見抜き、入力・処理・出力に分けて考えます。", code: "int a[] = {3, 1, 4, 2};\nint max = a[0];\nfor (int i = 1; i < 4; i++) {\n    if (a[i] > max) max = a[i];\n}\nprintf(\"%d\\n\", max);", lines: ["4要素の配列です。", "最初の値を最大値候補にします。", "2番目以降を調べます。", "より大きければ更新します。", "最大値4を表示します。"], mistakes: ["複数の知識を一度に追おうとする", "配列の範囲を間違える"], points: ["頻出分野の組み合わせ", "消去法とトレース"] },
+  {
+    id: "bitwise-ops",
+    title: "ビット演算子",
+    category: "operator",
+    level: "standard",
+    estimatedMinutes: 25,
+    summary: "AND / OR / XOR / シフトの基本動作を理解します。",
+    syntax: "int x = a & b; int y = a << 2;",
+    code: "#include <stdio.h>\n\nint main(void) {\n    unsigned int a = 0b1100, b = 0b1010;\n    printf(\"%u %u %u %u\\n\", a & b, a | b, a ^ b, a << 1);\n    return 0;\n}",
+    lines: ["2つの符号なし整数 a, b を2進リテラルで宣言します。", "& は AND、| は OR、^ は XOR、<< は左シフトです。", "結果を表示します。"],
+    mistakes: ["& と && を混同する", "signed 整数で右シフトの挙動が違うことを忘れる"],
+    points: ["AND", "OR", "XOR", "シフト"],
+  },
+  {
+    id: "struct-basic",
+    title: "構造体の基本",
+    category: "struct",
+    level: "standard",
+    estimatedMinutes: 30,
+    summary: "複数の異なる型をまとめて1つのデータ型にする方法を学びます。",
+    syntax: "typedef struct Point { int x; int y; } Point;",
+    code: "#include <stdio.h>\n\ntypedef struct { int x; int y; } Point;\n\nint main(void) {\n    Point p = {3, 4};\n    printf(\"%d %d\\n\", p.x, p.y);\n    return 0;\n}",
+    lines: ["int 2つをまとめた Point 型を定義します。", "Point 型の変数 p を {3, 4} で初期化します。", "メンバへ . でアクセスして表示します。"],
+    mistakes: ["初期化時に型名を書かない (Point p = Point{3,4}; は C++ 構文)", "アロー演算子と . を混同する"],
+    points: ["struct", "typedef", "メンバアクセス"],
+  },
+  {
+    id: "union-basic",
+    title: "共用体の基本",
+    category: "union",
+    level: "standard",
+    estimatedMinutes: 20,
+    summary: "同じメモリ領域を複数の型で共有する union を学びます。",
+    syntax: "typedef union { int i; float f; } Num;",
+    code: "#include <stdio.h>\n\ntypedef union { int i; float f; } Num;\n\nint main(void) {\n    Num n;\n    n.i = 0x40490fdb;\n    printf(\"%f\\n\", n.f);\n    return 0;\n}",
+    lines: ["int と float を共有する Num 型を定義します。", "int として値を入れます。", "float として読み出すと同じビットを別の値として解釈します。"],
+    mistakes: ["複数メンバを同時に有効だと思い込む", "エンディアンを意識しない"],
+    points: ["union", "メモリ共有", "型 punning"],
+  },
+  {
+    id: "enum-basic",
+    title: "列挙型",
+    category: "enum",
+    level: "basic",
+    estimatedMinutes: 15,
+    summary: "関連する整数定数をまとめて名前を付けます。",
+    syntax: "enum Color { RED, GREEN, BLUE };",
+    code: "#include <stdio.h>\n\nenum Color { RED, GREEN, BLUE };\n\nint main(void) {\n    enum Color c = GREEN;\n    printf(\"%d\\n\", c);\n    return 0;\n}",
+    lines: ["Color 列挙型を定義します。RED=0, GREEN=1, BLUE=2 が割り当てられます。", "c に GREEN を入れます。", "整数値 1 を出力します。"],
+    mistakes: ["全ての列挙値が 0 だと思い込む", "enum の値を文字列として直接表示しようとする"],
+    points: ["enum", "整数値", "定数のグルーピング"],
+  },
+  {
+    id: "switch-default",
+    title: "switch と default",
+    category: "control",
+    level: "standard",
+    estimatedMinutes: 20,
+    summary: "複数の case で分岐し、default でどれにも該当しない場合を処理します。",
+    syntax: "switch (n) { case 1: ...; break; default: ...; }",
+    code: "#include <stdio.h>\n\nint main(void) {\n    int n = 3;\n    switch (n) {\n        case 1: printf(\"one\\n\"); break;\n        case 2: printf(\"two\\n\"); break;\n        default: printf(\"other\\n\");\n    }\n    return 0;\n}",
+    lines: ["整数 n を switch で分岐します。", "case 1 / 2 以外のとき default に入ります。", "3 なので other を表示します。"],
+    mistakes: ["break を忘れて次の case に抜けてしまうフォールスルー", "default を書き忘れる"],
+    points: ["switch", "case", "default", "break"],
+  },
+  {
+    id: "goto-usage",
+    title: "goto の使いどころ",
+    category: "control",
+    level: "advanced",
+    estimatedMinutes: 20,
+    summary: "goto を使って多重ループから一気に抜ける方法を学びます。",
+    syntax: "for (...) { for (...) { goto end; } } end: ;",
+    code: "#include <stdio.h>\n\nint main(void) {\n    for (int i = 0; i < 5; i++) {\n        for (int j = 0; j < 5; j++) {\n            if (i == 2 && j == 3) goto end;\n        }\n    }\nend:\n    printf(\"done\\n\");\n    return 0;\n}",
+    lines: ["二重ループの中で goto end; を呼びます。", "ラベル end にジャンプして外側のループもまとめて抜けます。", "done を表示して終了します。"],
+    mistakes: ["無闇に多用して可読性を下げる", "関数をまたぐ goto を書く"],
+    points: ["goto", "ラベル", "多重ループ脱出"],
+  },
+  {
+    id: "getopt-cli",
+    title: "コマンドラインオプション解析",
+    category: "advanced",
+    level: "standard",
+    estimatedMinutes: 30,
+    summary: "getopt で -v や -f file などのオプションを解析します。",
+    syntax: "int opt; while ((opt = getopt(argc, argv, \"vf:\")) != -1) { ... }",
+    code: "#include <stdio.h>\n#include <unistd.h>\n\nint main(int argc, char *argv[]) {\n    int opt, verbose = 0;\n    while ((opt = getopt(argc, argv, \"v\")) != -1) {\n        if (opt == \"v\"[0]) verbose = 1;\n    }\n    printf(\"verbose=%d\\n\", verbose);\n    return 0;\n}",
+    lines: ["getopt の戻り値は見つかったオプション文字か -1 (終了) です。", "v オプションで verbose を 1 にします。", "結果を表示します。"],
+    mistakes: ["getopt の文字列で引数を取るオプションに : を付け忘れる", "optind をリセットせず 2 回ループする"],
+    points: ["getopt", "argc/argv", "オプション解析"],
+  },
+  {
+    id: "time-h-functions",
+    title: "time.h で日時を扱う",
+    category: "stdlib",
+    level: "standard",
+    estimatedMinutes: 20,
+    summary: "time() / localtime() / strftime() で日時を文字列化します。",
+    syntax: "time_t t = time(NULL); struct tm *lt = localtime(&t);",
+    code: "#include <stdio.h>\n#include <time.h>\n\nint main(void) {\n    time_t t = time(NULL);\n    struct tm *lt = localtime(&t);\n    char buf[32];\n    strftime(buf, sizeof(buf), \"%Y-%m-%d\", lt);\n    printf(\"%s\\n\", buf);\n    return 0;\n}",
+    lines: ["現在時刻を time_t で取得します。", "ローカルタイムに変換します。", "YYYY-MM-DD 形式で文字列化します。"],
+    mistakes: ["gmtime の返り値を free しようとする", "strftime のフォーマット指定を間違える"],
+    points: ["time_t", "struct tm", "strftime"],
+  },
   { id: "file-write", title: "ファイル書き込み", category: "ファイルI/O", level: "advanced", estimatedMinutes: 30, summary: "fopen/fprintf/fcloseでファイルへ書き出す基本を学びます。", syntax: "fopenでファイルを開き、fprintfで書き込み、fcloseで閉じます。", code: "FILE *fp = fopen(\"out.txt\", \"w\");\nfprintf(fp, \"%d\", 5);\nfclose(fp);\nprintf(\"5\");", lines: ["書き込み用ファイルを開きます。", "整数5を書き込みます。", "ファイルを閉じます。", "結果5を表示します。"], mistakes: ["fcloseを忘れる", "モードwとaを取り違える"], points: ["fopenのモード", "fcloseの役割"] },
   { id: "file-read", title: "ファイル読み込み", category: "ファイルI/O", level: "advanced", estimatedMinutes: 30, summary: "fopen/fgetsでファイルから1行ずつ読み込みます。", syntax: "fgetsは改行まで読み込み、終端に\0を付けます。", code: "FILE *fp = fopen(\"data.txt\", \"r\");\nchar buf[64];\nfgets(buf, sizeof buf, fp);\nprintf(\"%s\", buf);\nfclose(fp);", lines: ["読み込み用ファイルを開きます。", "受信用バッファを用意します。", "1行読み込みます。", "読み込んだ内容を表示します。", "ファイルを閉じます。"], mistakes: ["バッファサイズを指定しない", "fopen失敗を確認しない"], points: ["fgetsの使い方", "エラー確認の習慣"] },
   { id: "split-compile", title: "分割コンパイル", category: "分割コンパイル", level: "advanced", estimatedMinutes: 25, summary: "複数ファイルに分けてビルドする方法を理解します。", syntax: "ヘッダに関数宣言、ソースに定義を置き、リンクして1つの実行ファイルを作ります。", code: "/* calc.h */\nint add(int a, int b);\n/* calc.c */\nint add(int a, int b) { return a + b; }\n/* main.c */\n#include \"calc.h\"\nint main(void) { printf(\"%d\", add(1, 1)); return 0; }", lines: ["ヘッダで関数を宣言します。", "ソースで関数を定義します。", "mainから呼び出します。", "1+1の2を表示します。"], mistakes: ["ヘッダで関数を定義してしまう", "externを忘れる"], points: ["宣言と定義の違い", "ヘッダの二重include防止"] },
@@ -176,11 +286,11 @@ const seeds: LessonSeed[] = [
     level: "standard",
     estimatedMinutes: 20,
     summary: "複雑な型を読みやすく短い名前で扱えるようにします。",
-    syntax: "typedef unsigned long size_t_alias;",
+    syntax: "typedef unsigned_long size_t_alias;",
     code: "#include <stdio.h>\n\ntypedef unsigned long ulong;\n\nint main(void) {\n    ulong n = 1234567890UL;\n    printf(\"%lu\\n\", n);\n    return 0;\n}",
     lines: ["unsigned long に ulong という別名をつけます。", "ulong 型として変数を宣言します。", "値を表示します。"],
-    mistakes: ["typedef と #define を混同する", "関数ポインタ typedef の読み方を知らない"],
-    points: ["typedef", "型の別名", "可読性向上"],
+    mistakes: ["typedef とマクロ define を混同する", "関数ポインタの typedef_alias の読み方を知らない"],
+    points: ["typedef 構文", "型の別名", "可読性向上"],
   },
 ];
 
@@ -265,6 +375,7 @@ export const lessons: Lesson[] = seeds.map((seed) => ({
     return [`q-${String(categoryIndex + 1).padStart(2, "0")}-01`, `q-${String(categoryIndex + 1).padStart(2, "0")}-02`];
   })(),
   questionCount: 6,
+  comments: seed.comments,
 }));
 
 export const lessonById = Object.fromEntries(lessons.map((lesson) => [lesson.id, lesson]));

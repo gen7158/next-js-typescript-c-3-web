@@ -30,9 +30,18 @@ export type Exercise = {
   examPoint: string;
 };
 
+export type LessonComment = {
+  id: string;
+  author: string;
+  message: string;
+  createdAt: string;
+  pinned?: boolean;
+};
+
 export type Lesson = {
   id: string;
   title: string;
+  comments?: LessonComment[];
   category: string;
   level: LessonLevel;
   estimatedMinutes: number;
