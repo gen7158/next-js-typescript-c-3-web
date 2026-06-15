@@ -198,6 +198,21 @@ const categories: { name: string; seeds: Seed[] }[] = [
       { question: "合格条件が60点以上のとき、境界値として特に確認すべき組はどれですか。", choices: ["0と100だけ", "59と60", "30と40", "60と70だけ"], answer: 1, difficulty: "exam", explanation: "条件の境界直前59と境界値60を確認すると>と>=の違いを検証できます。" },
     ],
   },
+  {
+    name: "発展ドリル",
+    seeds: [
+      { question: "再帰関数で階乗を求めるコードで、ベースケースとして適切なのはどれですか。", choices: ["n == 0 で 1 を返す", "n == 100 で 0 を返す", "n < 0 で再帰する", "ベースケースは不要"], answer: 0, type: "choice", difficulty: "standard", explanation: "n == 0 または n <= 1 で 1 を返し、再帰を止めます。" },
+      { question: "malloc で確保したメモリを使い終わったら呼ぶべき関数はどれですか。", choices: ["delete", "free", "clear", "reset"], answer: 1, type: "choice", difficulty: "standard", explanation: "C言語では free() で解放します。delete は C++ の演算子です。" },
+      { question: "二分探索はソート済み配列に対して O(log n) で動く。", answer: true, type: "trueFalse", difficulty: "standard", explanation: "二分探索はソート済み配列前提で計算量 O(log n) です。" },
+      { question: "qsort の比較関数 cmp が「a < b なら負、a == b なら 0、a > b なら正」を返すとき、昇順ソートになります。", answer: true, type: "trueFalse", difficulty: "standard", explanation: "qsort はその規約で昇順に整列します。" },
+      { question: "可変引数マクロで引数リストを識別子に置換する演算子はどれですか。", choices: ["#", "##", "... (省略記号)", "@@"], answer: 2, type: "choice", difficulty: "exam", explanation: "... (省略記号) で可変個の引数を受けられます。" },
+      { question: "EOF はファイル終端を表す値で、stdio.h で定義される整数定数である。", answer: true, type: "trueFalse", difficulty: "standard", explanation: "EOF は通常 -1 で、stdio.h でマクロ定義されています。" },
+      { question: "次のマクロの誤りはどれですか。", code: "#define SQUARE(x) x * x", choices: ["演算子の優先順位で意図しない評価になる", "コメントが足りない", "型が違っている", "誤りはない"], answer: 0, type: "choice", difficulty: "exam", explanation: "SQUARE(1+2) が 1+2*1+2 = 5 になるなど、括弧不足で誤動作します。" },
+      { question: "再帰関数のスタックオーバーフローを避けるため、ループで書き直せる問題はそうすべきである。", answer: true, type: "trueFalse", difficulty: "standard", explanation: "末尾再帰最適化が無い処理系では反復が安全です。" },
+      { question: "1バイト=8ビットとして、unsigned int (32ビット) の最大値を入力してください。", answer: 4294967295, type: "fill", difficulty: "exam", explanation: "2^32 - 1 = 4294967295 です。" },
+      { question: "可変長配列 (VLA) は C99 で導入された、関数内でサイズを実行時に決められる配列である。", answer: true, type: "trueFalse", difficulty: "standard", explanation: "C99 の新機能で int a[n] のように書けます。" },
+    ],
+  },
 ];
 
 export const questions: Question[] = categories.flatMap((category, categoryIndex) =>
