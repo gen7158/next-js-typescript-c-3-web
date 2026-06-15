@@ -108,9 +108,12 @@ npm run build        # next build
 - **Dependabot ルール**: メジャー更新は除外（CI互換性問題回避）。マイナー/パッチのみ自動PR化
 - **Dependabot 自動マージ**: `.github/workflows/dependabot-auto-merge.yml`
   - patch/minor リリースは CI 通過後に自動マージ
-- **手動デプロイ（代替手段）**: `.github/workflows/deploy-vercel.yml`
-  - GitHub の Actions タブから手動実行で Vercel へデプロイ可能
-  - 通常の運用では Vercel Dashboard での GitHub 連携を推奨（次節）
+- **Vercel GitHub 連携**: ✅ 有効化済み
+  - `main` ブランチへの push で Vercel が自動で本番デプロイを実行
+  - カスタム Build/Install コマンド（`cd ts-pass-lab && npm run build` 等）も保持
+- **手動デプロイ（フォールバック）**: `.github/workflows/deploy-vercel.yml`
+  - Vercel GitHub 連携が落ちていた場合のフォールバック手段
+  - GitHub の Actions タブから手動実行で Vercel CLI 経由でデプロイ
 
 ## 📚 ドキュメント
 
