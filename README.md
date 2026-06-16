@@ -110,7 +110,7 @@ npm run build        # next build
   - patch/minor リリースは CI 通過後に自動マージ
 - **Vercel GitHub 連携**: ✅ 有効化済み
   - `main` ブランチへの push で Vercel が自動で本番デプロイを実行
-  - カスタム Build/Install コマンド（`cd ts-pass-lab && npm run build` 等）も保持
+  - TypeScript版は `Root Directory = ts-pass-lab`、Build/Install は Vercel 標準設定
 - **手動デプロイ（フォールバック）**: `.github/workflows/deploy-vercel.yml`
   - Vercel GitHub 連携が落ちていた場合のフォールバック手段
   - GitHub の Actions タブから手動実行で Vercel CLI 経由でデプロイ
