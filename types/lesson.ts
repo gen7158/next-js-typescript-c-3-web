@@ -19,6 +19,10 @@ export type Exercise = {
   id: string;
   title: string;
   description: string;
+  taskGoal?: string;
+  inputSpec?: string;
+  outputSpec?: string;
+  successCriteria?: string[];
   starterCode: string;
   stdin?: string;
   expectedOutput?: string;

@@ -349,15 +349,28 @@ export const lessons: Lesson[] = seeds.map((seed) => ({
     id: `${seed.id}-exercise-1`,
     title: `${seed.title}を使って結果を出力しよう`,
     description: `基本例を参考に、${seed.title}の処理が分かるCプログラムを完成させてください。実行ボタンでは、必要な構文と期待される出力を確認します。`,
+    taskGoal: `この演習では「${seed.title}」で学んだ処理をmain関数の中に自分で書きます。具体的には、${seed.lines.slice(0, 3).join(" → ")}という流れをコードにし、最後に期待される結果を表示します。`,
+    inputSpec: exerciseInputs[seed.id]
+      ? `テスト入力として「${exerciseInputs[seed.id].replace(/\n/g, "\\n")}」が標準入力から渡されます。scanfやgetcharなどで読み取って使います。`
+      : "外部入力は使いません。必要な値は、main関数の中で変数・配列・定数として自分で用意します。",
+    outputSpec: expectedOutputs[seed.id]
+      ? `標準出力に「${expectedOutputs[seed.id]}」を表示します。この値は、処理の結果が正しいかを判定するための目標です。`
+      : "画面への出力は必須ではありません。コンパイルでき、main関数が正常終了することを確認します。",
+    successCriteria: [
+      `${seed.title}で学んだ構文・関数を使っている`,
+      "main関数の中で必要な値を用意し、処理の順番が分かる",
+      expectedOutputs[seed.id] ? `実行結果が「${expectedOutputs[seed.id]}」と一致する` : "コンパイルでき、正常終了する",
+    ],
     starterCode: starterProgram(seed),
     stdin: exerciseInputs[seed.id],
     expectedOutput: expectedOutputs[seed.id],
     requirements: [`${seed.title}で学んだ構文を使う`, "main関数を正常終了させる", "期待される結果を出力する"],
     hints: [`基本例の${seed.lines[0] ?? "最初の行"}に注目してください。`, "セミコロン、丸括弧、波括弧の対応を確認しましょう。"],
     guideSteps: [
-      `STEP 1: ${seed.title}で必要な変数や定数を宣言する`,
-      ...seed.lines.slice(0, 3).map((line, index) => `STEP ${index + 2}: ${line}`),
-      `STEP ${Math.min(seed.lines.length, 3) + 2}: 実行前に、期待される結果「${expectedOutputs[seed.id] || "正常終了"}」になるか確認する`,
+      `STEP 1: 何を作るか確認する。「${seed.title}」の処理をmain関数に書く課題です。`,
+      `STEP 2: ${seed.title}で必要な変数・配列・定数を宣言する`,
+      ...seed.lines.slice(0, 3).map((line, index) => `STEP ${index + 3}: ${line}`),
+      `STEP ${Math.min(seed.lines.length, 3) + 3}: 実行前に、期待される結果「${expectedOutputs[seed.id] || "正常終了"}」になるか確認する`,
     ],
     solution: completeProgram(seed),
     explanation: `模範解答では、${seed.title}の基本構文を使い、処理の開始から出力、正常終了までを一つのプログラムとしてまとめています。`,

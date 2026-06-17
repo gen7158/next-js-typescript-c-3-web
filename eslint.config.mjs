@@ -6,7 +6,7 @@ const compat = new FlatCompat({
 
 const config = [
   {
-    ignores: [".next/**", "node_modules/**", "work/**", "next-env.d.ts"],
+    ignores: [".next/**", "node_modules/**", "work/**", "next-env.d.ts", "ts-pass-lab/.next/**", "ts-pass-lab/out/**", "ts-pass-lab/build/**"],
   },
   ...compat.extends("next/core-web-vitals", "next/typescript"),
 ];

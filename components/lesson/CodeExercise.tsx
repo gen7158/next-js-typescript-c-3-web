@@ -90,7 +90,13 @@ export function CodeExercise({
   const context = useMemo(() => ({
     title: exercise.title,
     lesson: `${lesson.title}\n${lesson.summary}\n試験ポイント: ${lesson.examPoints.join("、")}`,
-    problem: `${exercise.description}\n条件: ${exercise.requirements.join("、")}`,
+    problem: [
+      exercise.description,
+      exercise.taskGoal ? `作るもの: ${exercise.taskGoal}` : "",
+      exercise.inputSpec ? `使う値・入力: ${exercise.inputSpec}` : "",
+      exercise.outputSpec ? `出力の意味: ${exercise.outputSpec}` : "",
+      `条件: ${exercise.requirements.join("、")}`,
+    ].filter(Boolean).join("\n"),
     code,
     error: result.status === "idle" ? undefined : `${result.detail}\n出力: ${result.output}`,
   }), [code, exercise, lesson, result]);
@@ -148,6 +154,19 @@ export function CodeExercise({
   };
   const guideSteps = exercise.guideSteps
     ?? exercise.requirements.map((item, index) => `STEP ${index + 1}: ${item}`);
+  const taskGoal = exercise.taskGoal
+    ?? `この演習では「${exercise.description}」を満たすCプログラムを書きます。`;
+  const inputSpec = exercise.inputSpec
+    ?? (exercise.stdin ? `標準入力として「${exercise.stdin.replace(/\n/g, "\\n")}」を使います。` : "外部入力は使いません。必要な値はmain関数の中で用意します。");
+  const outputSpec = exercise.outputSpec
+    ?? (exercise.expectedOutput ? `標準出力に「${exercise.expectedOutput}」を表示します。` : "画面への出力は必須ではありません。コンパイルと正常終了を確認します。");
+  const successCriteria = exercise.successCriteria?.length
+    ? exercise.successCriteria
+    : [
+        "課題説明にある処理をCコードで表現できている",
+        "コンパイルエラーがない",
+        exercise.expectedOutput ? `実行結果が「${exercise.expectedOutput}」と一致する` : "main関数が正常終了する",
+      ];
   const guidePanel = (
     <div className="rounded-xl border border-primary/25 bg-primary/5 p-4">
       <p className="flex items-center gap-2 text-xs font-semibold text-[#c2bcff]"><ListOrdered className="h-4 w-4" />コードを書く順番</p>
@@ -189,6 +208,22 @@ export function CodeExercise({
             <p className="text-[10px] font-bold uppercase tracking-[.16em] text-[#aaa1ff]">Mission</p>
             <h3 className="mt-2 text-lg font-semibold">{exercise.title}</h3>
             <p className="mt-3 text-sm leading-7 text-[#cbd0da]">{exercise.description}</p>
+            <div className="mt-4 grid gap-3">
+              <div className="rounded-xl border border-primary/20 bg-primary/5 p-4">
+                <p className="text-[10px] font-bold uppercase tracking-[.14em] text-[#c2bcff]">作るもの</p>
+                <p className="mt-2 text-xs leading-6 text-[#d6d9e2]">{taskGoal}</p>
+              </div>
+              <div className="rounded-xl border border-primary/20 bg-primary/5 p-4">
+                <p className="text-[10px] font-bold uppercase tracking-[.14em] text-[#c2bcff]">使う値・入力</p>
+                <p className="mt-2 text-xs leading-6 text-[#d6d9e2]">{inputSpec}</p>
+              </div>
+              <div className="rounded-xl border border-primary/20 bg-primary/5 p-4">
+                <p className="text-[10px] font-bold uppercase tracking-[.14em] text-[#c2bcff]">出力の意味</p>
+                <p className="mt-2 text-xs leading-6 text-[#d6d9e2]">{outputSpec}</p>
+              </div>
+            </div>
+            <h4 className="mt-5 text-xs font-semibold">完成判定</h4>
+            <ul className="mt-2 space-y-2">{successCriteria.map((item) => <li key={item} className="flex gap-2 text-xs leading-5 text-muted"><CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-success" />{item}</li>)}</ul>
             <h4 className="mt-5 text-xs font-semibold">実装条件</h4>
             <ul className="mt-2 space-y-2">{exercise.requirements.map((item) => <li key={item} className="flex gap-2 text-xs leading-5 text-muted"><CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-success" />{item}</li>)}</ul>
             <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-1">

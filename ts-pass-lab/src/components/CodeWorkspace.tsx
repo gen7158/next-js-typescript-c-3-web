@@ -193,6 +193,9 @@ export default function CodeWorkspace({
   const context = [
     `レッスン: ${lesson.title}`,
     `演習: ${lesson.exercise.description}`,
+    lesson.exercise.taskGoal ? `作るもの: ${lesson.exercise.taskGoal}` : '',
+    lesson.exercise.inputSpec ? `使う値・入力: ${lesson.exercise.inputSpec}` : '',
+    lesson.exercise.outputSpec ? `出力の意味: ${lesson.exercise.outputSpec}` : '',
     `要件: ${lesson.exercise.requirements.join('、')}`,
     `現在のコード:\n${code}`,
     `実行結果: ${result.text}`,
@@ -201,6 +204,19 @@ export default function CodeWorkspace({
   ].filter(Boolean).join('\n\n');
   const guideSteps = lesson.exercise.guideSteps
     ?? lesson.exercise.requirements.map((item, index) => `STEP ${index + 1}: ${item}`);
+  const taskGoal = lesson.exercise.taskGoal
+    ?? `この演習では「${lesson.exercise.description}」を満たす短いTypeScriptコードを書きます。`;
+  const inputSpec = lesson.exercise.inputSpec
+    ?? '使う値は、レッスンのコード例またはスターターコメントを参考に自分で用意します。';
+  const outputSpec = lesson.exercise.outputSpec
+    ?? `最後にconsole.logで「${lesson.exercise.expectedOutput}」を表示します。`;
+  const successCriteria = lesson.exercise.successCriteria?.length
+    ? lesson.exercise.successCriteria
+    : [
+        '課題説明にある処理をコードで表現できている',
+        'TypeScriptの型エラーが残っていない',
+        `実行結果が「${lesson.exercise.expectedOutput}」と一致する`,
+      ];
 
   const completeAndContinue = () => {
     const record: LessonCodeRecord = {
@@ -249,6 +265,22 @@ export default function CodeWorkspace({
               <span>MISSION</span>
               <h3>{lesson.exercise.title}</h3>
               <p>{lesson.exercise.description}</p>
+              <div className={styles.taskBrief}>
+                <div>
+                  <small>作るもの</small>
+                  <p>{taskGoal}</p>
+                </div>
+                <div>
+                  <small>使う値・入力</small>
+                  <p>{inputSpec}</p>
+                </div>
+                <div>
+                  <small>出力の意味</small>
+                  <p>{outputSpec}</p>
+                </div>
+              </div>
+              <h4>完成判定</h4>
+              <ul>{successCriteria.map((item) => <li key={item}><CheckCircle2 size={14} />{item}</li>)}</ul>
               <h4>実装条件</h4>
               <ul>{lesson.exercise.requirements.map((item) => <li key={item}><CheckCircle2 size={14} />{item}</li>)}</ul>
               <div className={styles.expected}><small>期待される出力</small><code>{lesson.exercise.expectedOutput}</code></div>

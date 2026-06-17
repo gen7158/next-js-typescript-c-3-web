@@ -19,6 +19,10 @@
 .mission ul { list-style: none; }
 .mission li { display: flex; align-items: flex-start; gap: 8px; margin: 9px 0; color: var(--muted); font-size: 12px; line-height: 1.5; }
 .mission li svg { flex: none; color: var(--green); }
+.taskBrief { display: grid; gap: 10px; margin-top: 16px; }
+.taskBrief div { padding: 13px; border: 1px solid rgba(124, 108, 242, .22); border-radius: 10px; background: rgba(124, 108, 242, .06); }
+.taskBrief small { display: block; margin-bottom: 7px; color: #c2bcff; font-size: 9px; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; }
+.taskBrief p { color: #d6d9e2; font-size: 12px; line-height: 1.75; }
 .expected, .examPoint, .hint, .guide { margin-top: 18px; padding: 14px; border-radius: 9px; background: #090b10; }
 .expected small, .examPoint small { display: block; color: var(--muted); font-size: 9px; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; }
 .expected code { display: block; margin-top: 9px; color: var(--cyan); }
