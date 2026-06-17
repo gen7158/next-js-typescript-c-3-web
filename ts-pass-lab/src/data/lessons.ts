@@ -20,6 +20,29 @@ type Seed = {
   practice: string;
 };
 
+const placeholderComparison = 'C言語版・他言語との比較ポイントを記載';
+
+function primaryFocus(seed: Seed) {
+  return seed.focus[0] ?? seed.title;
+}
+
+function secondaryFocus(seed: Seed) {
+  return seed.focus[1] ?? '関連する考え方';
+}
+
+function usefulComparison(seed: Seed) {
+  return seed.comparisons.find((item) => item && item !== placeholderComparison)
+    ?? `${primaryFocus(seed)}は、似た書き方と比べて「どの値を安全に扱うための仕組みか」を意識すると理解しやすくなります。`;
+}
+
+function whyThisMatters(seed: Seed) {
+  return `${seed.title}は、${seed.practice}ときの迷いを減らすために重要です。${seed.concept} 先に入力・処理・出力の関係を整理すると、型エラーだけでなく実行結果のズレにも気づきやすくなります。`;
+}
+
+function firstSectionDescription(seed: Seed) {
+  return `最初に見るのは「${primaryFocus(seed)}が何を表すか」と「値がどこから来て、どこへ渡るか」です。この講座では、${seed.practice}流れを短いコードに分けて確認します。`;
+}
+
 const seeds: Seed[] = [
   {
     id: 'typescript-basics',
@@ -508,7 +531,7 @@ const seeds: Seed[] = [
     comparisons: ['C言語版・他言語との比較ポイントを記載'],
   },
   {
-    id: 'unit-testing',
+    id: 'ts-unit-testing-assert',
     title: '単体テストとassert',
     chapter: 'Chapter 9 テストとデバッグ',
     category: 'テスト',
@@ -580,7 +603,7 @@ const seeds: Seed[] = [
     comparisons: ['C言語版・他言語との比較ポイントを記載'],
   },
   {
-    id: 'utility-types',
+    id: 'utility-types-intro',
     title: 'Utility Types 入門',
     chapter: 'Chapter 5 型を操るテクニック',
     category: '型システム',
@@ -598,7 +621,7 @@ const seeds: Seed[] = [
     comparisons: ['C言語版・他言語との比較ポイントを記載'],
   },
   {
-    id: 'generics',
+    id: 'generics-intro',
     title: 'ジェネリクスの基本',
     chapter: 'Chapter 5 型を操るテクニック',
     category: '型システム',
@@ -957,7 +980,7 @@ const typescriptLessons: Lesson[] = seeds.map((seed, index) => ({
     '型エラーの原因を順番に読み取れる',
     seed.practice,
   ],
-  whyImportant: seed.concept,
+  whyImportant: whyThisMatters(seed),
   pitfalls: [
     seed.mistake,
     '型注釈と実際の値が一致しているか確認せず進める',
@@ -971,16 +994,16 @@ const typescriptLessons: Lesson[] = seeds.map((seed, index) => ({
   sections: [
     {
       title: 'まず理解すること',
-      description: seed.concept,
+      description: firstSectionDescription(seed),
       points: [
-        `${seed.focus[0]}がどの情報を表しているか確認する`,
+        `${primaryFocus(seed)}がどの情報を表しているか確認する`,
         '入力される値と処理後の値を分けて考える',
         'TypeScriptが検査する部分とJavaScriptとして実行される部分を区別する',
       ],
     },
     {
       title: '使う場面',
-      description: `${seed.title}は、${seed.practice}場面で役立ちます。小さなコードで動きを確認してから、複数の型や関数を組み合わせましょう。`,
+      description: `${seed.title}は、${seed.practice}ときに役立ちます。まず最小コードで動きを確認し、その後に複数の型・関数・分岐を組み合わせると理解が崩れにくくなります。`,
       points: [
         '最初に扱うデータの形を言葉で整理する',
         '型エラーが出た行だけでなく、値を作った場所まで戻る',
@@ -990,8 +1013,8 @@ const typescriptLessons: Lesson[] = seeds.map((seed, index) => ({
     },
   ],
   comparisons: [
-    seed.comparisons?.[0],
-    `この講座では「${seed.focus.slice(0, 2).join('」と「')}」の役割を混同しないことが重要です。`,
+    usefulComparison(seed),
+    `この講座では「${primaryFocus(seed)}」と「${secondaryFocus(seed)}」の役割を混同しないことが重要です。`,
   ],
   extraExamples: [
     {
@@ -1004,7 +1027,7 @@ const typescriptLessons: Lesson[] = seeds.map((seed, index) => ({
   checkpoints: [
     {
       question: `${seed.title}を使う一番の目的は何ですか？`,
-      answer: `${seed.concept} 特に${seed.focus[0]}を意識すると、コードの意図と値の扱いを明確にできます。`,
+      answer: `${seed.concept} 特に${primaryFocus(seed)}を意識すると、コードの意図と値の扱いを明確にできます。`,
     },
     {
       question: `この講座で最も注意する間違いは何ですか？`,
@@ -1014,16 +1037,16 @@ const typescriptLessons: Lesson[] = seeds.map((seed, index) => ({
   exercise: {
     id: `${seed.id}-exercise`,
     title: `${seed.title}を使ってコードを完成させよう`,
-    description: `${seed.practice}課題です。基本例を参考に型チェックを通し、期待される結果を出力してください。`,
+    description: `この演習では、${seed.practice}コードを作ります。入力になる値を用意し、${primaryFocus(seed)}を使って処理し、最後に期待される結果を出力します。`,
     taskGoal: `この演習では「${seed.practice}」ための小さなTypeScriptコードを自分で書きます。具体的には、${seed.lineByLine.slice(0, 2).join(' ')}という処理を作り、最後にconsole.logで確認します。`,
-    inputSpec: `使う値はサンプルのコード例に出てくる値です。まず必要な変数・型・関数を用意し、その値を処理へ渡します。`,
+    inputSpec: `使う値はサンプルのコード例に出てくる値、または課題文に合う固定データです。まず必要な変数・型・関数を用意し、その値を処理へ渡します。`,
     outputSpec: `最後にconsole.logで「${seed.output || '画面への出力なし'}」を表示します。この出力は、作った変数や関数が正しく動いたことを確認するための目印です。`,
     successCriteria: [
       `課題の中心である「${seed.practice}」処理がコード内にある`,
-      `${seed.focus[0]}を使い、型エラーを残さない`,
+      `${primaryFocus(seed)}を使い、型エラーを残さない`,
       `実行結果が「${seed.output || '画面への出力なし'}」と一致する`,
     ],
-    requirements: [`${seed.focus[0]}を使う`, '型エラーを残さない', `コンソールへ「${seed.output}」を出力する`],
+    requirements: [`${primaryFocus(seed)}を使って課題の中心処理を書く`, '必要な値・型・関数名がコードから読み取れる', '型エラーを残さない', `コンソールへ「${seed.output}」を出力する`],
     starterCode: [
       '// この下にコードを書いてください。',
       '// 分からないときは上の「書き方ガイド」を開きましょう。',
@@ -1031,10 +1054,10 @@ const typescriptLessons: Lesson[] = seeds.map((seed, index) => ({
     ].join('\n'),
     solution: seed.code,
     expectedOutput: seed.output,
-    hints: [`基本構文「${seed.syntax}」を確認してください。`, `重要語は ${seed.focus.join('、')} です。`, seed.comparisons?.[0]],
+    hints: [`まず「${seed.practice}」ために必要な値を1つずつ書き出します。`, `基本構文「${seed.syntax}」を見て、同じ形で最小コードを書きます。`, `重要語は ${seed.focus.join('、')} です。`, usefulComparison(seed)],
     guideSteps: [
       `STEP 1: 何を作るか確認する。「${seed.practice}」コードを書く課題です。`,
-      `STEP 2: ${seed.focus[0]}を使って、必要な型・変数・関数の名前を先に書く`,
+      `STEP 2: ${primaryFocus(seed)}を使って、必要な型・変数・関数の名前を先に書く`,
       `STEP 3: 入力値から結果を作る処理を書く。関数ならreturn、配列ならmap/filterなど、講座で学んだ形を使う`,
       `STEP 4: console.logで結果を表示し、「${seed.output || '画面への出力なし'}」と同じになるか確認する`,
       'STEP 5: 実行前に、各変数の型と最終出力を自分で予想する',
@@ -1048,4 +1071,10 @@ const typescriptLessons: Lesson[] = seeds.map((seed, index) => ({
   ].slice(0, 6),
 }));
 
-export const lessons: Lesson[] = [...typescriptLessons, ...fullstackLessons];
+export const lessons: Lesson[] = [
+  ...typescriptLessons,
+  ...fullstackLessons.map((lesson, index) => ({
+    ...lesson,
+    step: typescriptLessons.length + index + 1,
+  })),
+];

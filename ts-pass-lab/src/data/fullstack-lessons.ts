@@ -17,6 +17,22 @@ type FullstackSeed = {
   practice: string;
 };
 
+function primaryFocus(seed: FullstackSeed) {
+  return seed.focus[0] ?? seed.title;
+}
+
+function secondaryFocus(seed: FullstackSeed) {
+  return seed.focus[1] ?? '関連する責務';
+}
+
+function whyThisMatters(seed: FullstackSeed) {
+  return `${seed.title}は、Webアプリを「画面だけ」ではなく、通信・サーバー処理・データ保存まで含めて設計するために重要です。${seed.concept} 役割を先に分けると、どこで検証し、どこで失敗を返し、どこをテストするかを判断しやすくなります。`;
+}
+
+function roleDescription(seed: FullstackSeed) {
+  return `まず「${primaryFocus(seed)}がブラウザ・サーバー・DBのどこに関係するか」を確認します。この講座では、${seed.practice}流れを小さな型や関数で再現し、Web全体の中での責務をつかみます。`;
+}
+
 const seeds: FullstackSeed[] = [
   { id:'web-client-server',title:'Webとクライアント・サーバー',chapter:'Chapter 9 Webの土台',category:'Web基礎',level:'basic',minutes:35,summary:'ブラウザ、サーバー、DBが協力して画面を作る流れを学びます。',concept:'Webアプリではブラウザがリクエストを送り、サーバーが処理し、必要ならDBを読み書きしてレスポンスを返します。役割を分けて考えることがフルスタック開発の出発点です。',syntax:'Browser -> HTTP Request -> Server -> Database -> Response',code:'type Layer = "browser" | "server" | "database";\nconst flow: Layer[] = ["browser", "server", "database"];\nconsole.log(flow.join(" -> "));',output:'browser -> server -> database',focus:['クライアント','サーバー','データベース','責務'],mistake:'画面に見える処理がすべてブラウザで行われると思う',practice:'Webアプリの処理順を型付き配列で表現する' },
   { id:'http-request-response',title:'HTTPリクエストとレスポンス',chapter:'Chapter 9 Webの土台',category:'HTTP',level:'basic',minutes:40,summary:'メソッド、URL、ヘッダー、ボディ、ステータスコードを整理します。',concept:'HTTPはブラウザとサーバーの会話の形式です。何をしたいかをメソッドで、対象をURLで、結果をステータスコードで表します。',syntax:'GET /api/users -> 200 OK',code:'type HttpResult = { method: "GET" | "POST"; status: number };\nconst result: HttpResult = { method: "GET", status: 200 };\nconsole.log(`${result.method} ${result.status}`);',output:'GET 200',focus:['HTTPメソッド','URL','ヘッダー','ステータスコード'],mistake:'エラー時も常に200を返して本文だけで失敗を表す',practice:'HTTPメソッドとステータスを型で制限する' },
@@ -159,7 +175,7 @@ export const fullstackLessons: Lesson[] = seeds.map((seed, index) => ({
     'フロントエンドとバックエンドの責務を区別できる',
     seed.practice,
   ],
-  whyImportant: seed.concept,
+  whyImportant: whyThisMatters(seed),
   pitfalls: [
     seed.mistake,
     '利用者から届く値をそのまま信用する',
@@ -170,16 +186,16 @@ export const fullstackLessons: Lesson[] = seeds.map((seed, index) => ({
   code: seed.code,
   output: seed.output,
   lineByLine: [
-    `この例では${seed.focus[0]}を中心に、扱うデータの形を定義します。`,
+    `この例では${primaryFocus(seed)}を中心に、扱うデータの形を定義します。`,
     '処理を小さな型または関数へ分け、入力と出力を追いやすくします。',
     `最後に「${seed.output}」となることを確認します。`,
   ],
   sections: [
     {
       title: 'Web全体での役割',
-      description: seed.concept,
+      description: roleDescription(seed),
       points: [
-        `${seed.focus[0]}がブラウザ・サーバー・DBのどこに属するか確認する`,
+        `${primaryFocus(seed)}がブラウザ・サーバー・DBのどこに属するか確認する`,
         '入力、処理、保存、出力の順にデータを追う',
         '失敗時にどの層がどのエラーを返すか考える',
       ],
@@ -196,7 +212,7 @@ export const fullstackLessons: Lesson[] = seeds.map((seed, index) => ({
     },
   ],
   comparisons: [
-    `${seed.focus[0]}と${seed.focus[1] ?? '関連機能'}は役割が異なります。実行場所と責務を基準に使い分けます。`,
+    `${primaryFocus(seed)}と${secondaryFocus(seed)}は役割が異なります。実行場所と責務を基準に使い分けます。`,
     'ブラウザでの入力チェックは操作性向上、サーバーでの入力チェックはデータ保護のために必要です。',
   ],
   extraExamples: [{
@@ -213,16 +229,17 @@ export const fullstackLessons: Lesson[] = seeds.map((seed, index) => ({
   exercise: {
     id: `${seed.id}-exercise`,
     title: `${seed.title}の設計判断をコードで確認`,
-    description: `${seed.practice}演習です。Web固有APIを直接動かす代わりに、同じデータ設計と判断ロジックをTypeScriptで実行します。`,
-    taskGoal: `この演習では「${seed.practice}」ためのTypeScriptコードを書きます。Webアプリ本体を作る代わりに、${seed.focus[0]}の判断ロジックを小さな型・関数・配列で再現します。`,
+    description: `この演習では、${seed.practice}コードを書きます。Web固有APIを直接動かす代わりに、同じデータ設計と判断ロジックをTypeScriptで実行します。`,
+    taskGoal: `この演習では「${seed.practice}」ためのTypeScriptコードを書きます。Webアプリ本体を作る代わりに、${primaryFocus(seed)}の判断ロジックを小さな型・関数・配列で再現します。`,
     inputSpec: '使う値はスターターコードまたは自分で用意する固定データです。ブラウザ操作やDB接続ではなく、入力データを関数へ渡して結果を確認します。',
     outputSpec: `最後にconsole.logで「${seed.output}」を表示します。この値は、設計判断や分岐が期待通りに動いたことを表します。`,
     successCriteria: [
-      `${seed.focus[0]}を意識した型や関数がある`,
+      `${primaryFocus(seed)}を意識した型や関数がある`,
       `「${seed.practice}」ための正常時処理がある`,
+      '失敗時や境界値をどこで扱うか説明できる',
       `実行結果が「${seed.output}」と一致する`,
     ],
-    requirements: [`${seed.focus[0]}を意識した型を使う`, 'anyを使わない', `「${seed.output}」を出力する`],
+    requirements: [`${primaryFocus(seed)}を意識した型を使う`, '入力・処理・出力の役割がコードから読み取れる', 'anyを使わない', `「${seed.output}」を出力する`],
     starterCode: [
       '// この下にコードを書いてください。',
       '// 分からないときは上の「書き方ガイド」を開きましょう。',
@@ -233,7 +250,7 @@ export const fullstackLessons: Lesson[] = seeds.map((seed, index) => ({
     hints: [seed.syntax, `重要語: ${seed.focus.join('、')}`, seed.mistake],
     guideSteps: [
       `STEP 1: 何を作るか確認する。「${seed.practice}」コードを書く課題です。`,
-      `STEP 2: ${seed.focus[0]}を表す型と入力データを用意する`,
+      `STEP 2: ${primaryFocus(seed)}を表す型と入力データを用意する`,
       `STEP 3: 「${seed.practice}」ための正常時の処理を書く`,
       'STEP 4: 未入力・不正値・権限不足など、必要なら失敗時の分岐を追加する',
       `STEP 5: console.logで「${seed.output}」を出力し、期待値と比べる`,
