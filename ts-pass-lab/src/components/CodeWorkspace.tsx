@@ -3,6 +3,7 @@
 import dynamic from 'next/dynamic';
 import { useEffect, useState } from 'react';
 import { ArrowRight, Bot, CheckCircle2, Copy, Eye, Focus, Lightbulb, ListOrdered, Loader2, Play, RotateCcw, Save, Terminal, Undo2, WrapText, XCircle } from 'lucide-react';
+import { configureLearningTypeScript } from '@/lib/monaco-typescript';
 import { saveLessonCodeRecord } from '@/lib/learning-storage';
 import type { Lesson, LessonCodeRecord } from '@/types/learning';
 import styles from './CodeWorkspace.module.css';
@@ -273,6 +274,7 @@ export default function CodeWorkspace({
               language="typescript"
               theme="vs-dark"
               value={code}
+              beforeMount={configureLearningTypeScript}
               onChange={(value) => {
                 setCode(value || '');
                 if (result.state !== 'idle') setResult({ state: 'idle', text: 'コードを変更しました。もう一度実行して判定してください。', output: '', diagnostics: [], inferredTypes: [] });

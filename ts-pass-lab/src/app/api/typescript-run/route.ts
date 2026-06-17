@@ -9,6 +9,15 @@ type InferredType = {
   line: number;
 };
 
+const globalsFileName = 'learning-globals.d.ts';
+const learningGlobals = `
+declare const console: {
+  log: (...values: unknown[]) => void;
+  error: (...values: unknown[]) => void;
+  warn: (...values: unknown[]) => void;
+};
+`;
+
 function diagnosticText(diagnostic: ts.Diagnostic) {
   const message = ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n');
   if (!diagnostic.file || diagnostic.start === undefined) return message;
@@ -28,26 +37,32 @@ export async function POST(request: Request) {
       strict: true,
       noImplicitAny: true,
       target: ts.ScriptTarget.ES2022,
-      module: ts.ModuleKind.None,
-      lib: ['lib.es2022.d.ts', 'lib.dom.d.ts'],
+      module: ts.ModuleKind.ESNext,
+      lib: ['lib.es2022.d.ts'],
       skipLibCheck: true,
     };
     const defaultHost = ts.createCompilerHost(options, true);
     const sourceFile = ts.createSourceFile(fileName, code, options.target ?? ts.ScriptTarget.ES2022, true, ts.ScriptKind.TS);
+    const globalsSourceFile = ts.createSourceFile(globalsFileName, learningGlobals, options.target ?? ts.ScriptTarget.ES2022, true, ts.ScriptKind.TS);
     let javascript = '';
     const host: ts.CompilerHost = {
       ...defaultHost,
-      fileExists: (name) => name === fileName || defaultHost.fileExists(name),
-      readFile: (name) => name === fileName ? code : defaultHost.readFile(name),
+      fileExists: (name) => name === fileName || name === globalsFileName || defaultHost.fileExists(name),
+      readFile: (name) => {
+        if (name === fileName) return code;
+        if (name === globalsFileName) return learningGlobals;
+        return defaultHost.readFile(name);
+      },
       getSourceFile: (name, languageVersion, onError, shouldCreateNewSourceFile) => {
         if (name === fileName) return sourceFile;
+        if (name === globalsFileName) return globalsSourceFile;
         return defaultHost.getSourceFile(name, languageVersion, onError, shouldCreateNewSourceFile);
       },
       writeFile: (name, text) => {
         if (name.endsWith('.js')) javascript = text;
       },
     };
-    const program = ts.createProgram([fileName], options, host);
+    const program = ts.createProgram([fileName, globalsFileName], options, host);
     const diagnostics = ts.getPreEmitDiagnostics(program)
       .filter((diagnostic) => !diagnostic.file || diagnostic.file.fileName === fileName)
       .map(diagnosticText);
