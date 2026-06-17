@@ -1015,7 +1015,7 @@ const typescriptLessons: Lesson[] = seeds.map((seed, index) => ({
     id: `${seed.id}-exercise`,
     title: `${seed.title}を使ってコードを完成させよう`,
     description: `${seed.practice}課題です。基本例を参考に型チェックを通し、期待される結果を出力してください。`,
-    taskGoal: `この演習では「${seed.practice}」ための小さなTypeScriptコードを自分で書きます。完成コードでは、${seed.focus[0]}を使い、値を作る処理とconsole.logで表示する処理を分けて考えます。`,
+    taskGoal: `この演習では「${seed.practice}」ための小さなTypeScriptコードを自分で書きます。具体的には、${seed.lineByLine.slice(0, 2).join(' ')}という処理を作り、最後にconsole.logで確認します。`,
     inputSpec: `使う値はサンプルのコード例に出てくる値です。まず必要な変数・型・関数を用意し、その値を処理へ渡します。`,
     outputSpec: `最後にconsole.logで「${seed.output || '画面への出力なし'}」を表示します。この出力は、作った変数や関数が正しく動いたことを確認するための目印です。`,
     successCriteria: [
