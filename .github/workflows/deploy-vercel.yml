@@ -28,7 +28,7 @@ jobs:
     environment:
       name: ${{ inputs.target || 'production' }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Install Vercel CLI
         run: npm install -g vercel@latest
       - name: Configure .vercel/project.json
@@ -55,7 +55,7 @@ jobs:
     environment:
       name: ${{ inputs.target || 'production' }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Install Vercel CLI
         run: npm install -g vercel@latest
       - name: Configure .vercel/project.json
